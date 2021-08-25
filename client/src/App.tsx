@@ -1,5 +1,4 @@
 import React from 'react';
-import './App.css';
 import MyHeader from './Header';
 
 // eslint-disable-next-line require-jsdoc
