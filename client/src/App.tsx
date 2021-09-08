@@ -3,7 +3,7 @@ import {BrowserRouter as Router,
   Switch,
   Route} from 'react-router-dom';
 import Home from './Home';
-import Login from './Login';
+import Login from './LoginPage';
 import Register from './Register';
 
 /**
@@ -21,15 +21,15 @@ class App extends React.Component {
    */
   render() {
     return (
-      <div>
-        <Router>
-          <Switch>
-            <Route exact path='/' component={Home} />
-            <Route path='/login' component={Login} />
-            <Route path='/register' component={Register} />
-          </Switch>
-        </Router>
-      </div>
+
+      <Router>
+        <Switch>
+          <Route exact path='/' component={Home} />
+          <Route path='/login' component={Login} />
+          <Route path='/register' component={Register} />
+        </Switch>
+      </Router>
+
     );
   }
 }

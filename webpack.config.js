@@ -8,12 +8,13 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'public'),
     filename: 'scripts/bundle.js',
+    publicPath: '/'
   },
   mode: process.env.NODE_ENV || 'development',
   devServer: {
+    historyApiFallback: true,
     static: path.join(__dirname, 'public'),
     compress: true,
-    port: 3001,
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
