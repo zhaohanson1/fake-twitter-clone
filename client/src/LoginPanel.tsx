@@ -2,7 +2,6 @@ import { Box, Grid, Typography } from "@material-ui/core";
 import React from "react";
 import { Link } from "react-router-dom";
 
-import "./css/home.css";
 import LoginForm from "./LoginForm";
 
 type LoginProps = {
@@ -26,32 +25,34 @@ class Login extends React.Component<LoginProps, LoginState> {
    */
   render() {
     return (
-      <div>
+      <Box width="75%">
         <Link href="#" onClick={() => this.props.changePanel("splash")} to={""}>
           Go Back
         </Link>
         <LoginForm />
-        <Box mx={8} my={4}>
+        <Box mx={8} my={4} width="auto">
           <Grid
             container
             direction="row"
             justifyContent="space-between"
-            alignItems="stretch"
+            alignItems="flex-start"
           >
             <Grid item>
               <Typography variant="body2">
-                <Link to={""}>Forgot password?</Link>
+                <Link to={""}>Forgot password? </Link>
               </Typography>
             </Grid>
             <Grid item>
               <Typography variant="body2">
                 {"Don't have an account? "}
-                <Link to="/register">Sign Up</Link>{" "}
+                <Link href="#" onClick={() => this.props.changePanel("register")} to={""}>
+                  Sign Up
+                </Link>
               </Typography>
             </Grid>
           </Grid>
         </Box>
-      </div>
+      </Box>
     );
   }
 }

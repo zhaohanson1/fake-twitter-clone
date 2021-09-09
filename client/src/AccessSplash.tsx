@@ -38,7 +38,8 @@ class AccessSplash extends React.Component<AccessProps, AccessState> {
               variant="contained"
               color="primary"
               fullWidth
-              href="/register"
+              href="#"
+              onClick={() => this.props.changePanel("register")}
             >
               Register Now
             </Button>
@@ -46,8 +47,7 @@ class AccessSplash extends React.Component<AccessProps, AccessState> {
           <Grid item>
             <Typography variant="body2">
               By signing up, you agree to the Terms of Service and Privacy
-              Policy, including Cookie Tracking, Location, Microphone, Camera,
-              SSN, Saved Passwords, Credit Card Numbers, and Bank PIN. (Fake)
+              Policy, including Cookie Tracking.
             </Typography>
           </Grid>
 

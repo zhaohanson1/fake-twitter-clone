@@ -1,4 +1,4 @@
-import { Button, Grid, TextField, Typography } from "@material-ui/core";
+import { Button, Grid, TextField } from "@material-ui/core";
 import React from "react";
 
 /**
@@ -7,7 +7,7 @@ import React from "react";
  * @class Login
  * @extends {React.Component}
  */
-class Login extends React.Component {
+class RegisterForm extends React.Component {
   /**
    *
    *
@@ -17,9 +17,6 @@ class Login extends React.Component {
   render() {
     return (
       <form>
-        <Typography variant="h5" align="center">
-          Log in to Fleeter
-        </Typography>
         <Grid container direction="column" spacing={1}>
           <Grid item>
             <TextField
@@ -48,8 +45,20 @@ class Login extends React.Component {
             />
           </Grid>
           <Grid item>
-            <Button variant="contained" color="primary" type="submit" fullWidth>
-              Sign in
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="confirm-password"
+              label="Confirm Password"
+              type="confirm-password"
+              id="confirm-password"
+            />
+          </Grid>
+          <Grid item>
+            <Button type="submit" variant="contained" color="primary" fullWidth>
+              Sign up
             </Button>
           </Grid>
         </Grid>
@@ -58,4 +67,4 @@ class Login extends React.Component {
   }
 }
 
-export default Login;
+export default RegisterForm;

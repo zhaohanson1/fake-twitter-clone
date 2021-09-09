@@ -1,4 +1,4 @@
-import { Grid } from "@material-ui/core";
+import { Box, CssBaseline } from "@material-ui/core";
 import React from "react";
 import LoginForm from "./LoginForm";
 
@@ -17,10 +17,14 @@ class LoginPage extends React.Component {
    */
   render() {
     return (
-      <Grid container>
-        <LoginForm></LoginForm>
-      </Grid>
-    );
+      <Box component='main'>
+          <CssBaseline/>
+          <Box mx="33vw" mt='10vh'>
+              <LoginForm/>
+          </Box>
+          
+      </Box>
+  );
   }
 }
 

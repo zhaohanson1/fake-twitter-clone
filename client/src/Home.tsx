@@ -1,5 +1,6 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
+import { createTheme } from "@material-ui/core/styles";
 import {
   Avatar,
   Box,
@@ -8,10 +9,11 @@ import {
   Typography,
 } from "@material-ui/core";
 
-import "./css/home.css";
 import AccessSplash from "./AccessSplash";
-import { createTheme } from "@material-ui/core/styles";
 import LoginPanel from "./LoginPanel";
+import RegisterPanel from "./RegisterPanel";
+
+import "./css/home.css";
 
 const theme = createTheme({
   palette: {
@@ -47,7 +49,6 @@ class HomePage extends React.Component<HomeProps, HomeState> {
     this.state = {
       accessPanel: "splash",
     };
-
     this.changePanel = this.changePanel.bind(this);
   }
 
@@ -61,6 +62,8 @@ class HomePage extends React.Component<HomeProps, HomeState> {
     switch (panel) {
       case "login":
         return <LoginPanel changePanel={this.changePanel} />;
+      case "register":
+        return <RegisterPanel changePanel={this.changePanel} />;
       default:
         return <AccessSplash changePanel={this.changePanel} />;
     }
@@ -98,7 +101,7 @@ class HomePage extends React.Component<HomeProps, HomeState> {
                   <Avatar>XD</Avatar>
                 </Grid>
                 <Grid item>
-                  <Typography variant="h4">Join Fleeter today.</Typography>
+                  <Typography variant="h4">Join the conversation.</Typography>
                 </Grid>
               </Box>
               {this.renderSwitch(accessPanel)}
