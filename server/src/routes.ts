@@ -2,7 +2,7 @@ import {Router, Request, Response} from 'express';
 import path from 'path';
 
 // eslint-disable-next-line new-cap
-const router = Router();
+export const router = Router();
 
 router.get('/*', (req: Request, res: Response) => {
   const indexPath = path.resolve(__dirname + '../../../public/index.html');
