@@ -2,7 +2,11 @@
 // import 'bootstrap/dist/css/bootstrap.css';
 var express = require('express');
 var cors = require('cors');
+var bodyParser = require('body-parser');
+require('./connectDatabase');
 var app = express();
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(cors());
 app.use(express.static('../../public'));
 var pageRouter = require('./routes');

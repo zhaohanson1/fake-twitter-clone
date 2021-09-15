@@ -15,6 +15,7 @@ module.exports = {
     historyApiFallback: true,
     static: path.join(__dirname, 'public'),
     compress: true,
+    port: process.env.WEBPACK_PORT
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
