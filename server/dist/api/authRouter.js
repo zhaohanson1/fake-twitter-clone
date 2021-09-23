@@ -42,26 +42,29 @@ var express_1 = require("express");
 exports.authRouter = express_1.Router({ mergeParams: true });
 var user_1 = require("../models/user");
 exports.authRouter.post("/signup", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var args;
+    var args, exitCode;
     return __generator(this, function (_a) {
-        args = {
-            email: req.body.email,
-            username: req.body.username,
-            password: req.body.password,
-            creationDate: null,
-            passwordSalt: null,
-            passwordHash: null,
-        };
-        user_1.createUser(args);
-        //TODO: catch error and throw to frontend
-        /*
-          Cases:
-            Username / email already in use
-            invalid pw (front-end should have validation)
-            other???
-        */
-        res.redirect("http://localhost:" + process.env.WEBPACK_PORT);
-        return [2 /*return*/];
+        switch (_a.label) {
+            case 0:
+                args = {
+                    email: req.body.email,
+                    username: req.body.username,
+                    password: req.body.password,
+                    creationDate: null,
+                    passwordSalt: null,
+                    passwordHash: null,
+                };
+                return [4 /*yield*/, user_1.createUser(args)];
+            case 1:
+                exitCode = _a.sent();
+                if (!(exitCode instanceof Boolean)) {
+                    res.json({ success: false, error_message: exitCode.message });
+                }
+                else {
+                    res.json({ success: true });
+                }
+                return [2 /*return*/];
+        }
     });
 }); });
 exports.authRouter.post("/login", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {

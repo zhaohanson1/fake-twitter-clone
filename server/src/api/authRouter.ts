@@ -14,7 +14,14 @@ authRouter.post("/signup", async (req: Request, res: Response) => {
     passwordHash: null,
   };
 
-  createUser(args);
+  const exitCode: any = await createUser(args);
+  
+  if (!(exitCode instanceof Boolean)) {
+    res.json({ success: false, error_message: exitCode.message });
+  } else {
+    res.json({ success: true });
+  }
+
   //TODO: catch error and throw to frontend
   /*
     Cases:
@@ -22,8 +29,6 @@ authRouter.post("/signup", async (req: Request, res: Response) => {
       invalid pw (front-end should have validation)
       other??? 
   */
-
-  res.redirect("http://localhost:" + process.env.WEBPACK_PORT);
 });
 
 authRouter.post("/login", async (req: Request, res: Response) => {

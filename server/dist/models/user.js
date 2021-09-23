@@ -67,15 +67,27 @@ exports.User = mongoose.model("AccountModel", UserSchema);
 exports.User.init();
 /* TODO: read how to write good to db */
 function createUser(args) {
-    var saltRounds = 10;
-    bcrypt.genSalt(saltRounds, function (_err, salt) {
-        bcrypt.hash(args["password"], salt, function (_err, hash) {
-            args["passwordSalt"] = salt;
-            args["passwordHash"] = hash;
-            args["creationDate"] = new Date();
-            var newUser = new exports.User(args);
-            //console.log(newUser);
-            newUser.save();
+    return __awaiter(this, void 0, void 0, function () {
+        var saltRounds;
+        return __generator(this, function (_a) {
+            saltRounds = 10;
+            return [2 /*return*/, bcrypt
+                    .genSalt(saltRounds)
+                    .then(function (salt) {
+                    args["passwordSalt"] = salt;
+                    return bcrypt.hash(args["password"], salt);
+                })
+                    .then(function (hash) {
+                    args["passwordHash"] = hash;
+                    args["creationDate"] = new Date();
+                    return new exports.User(args);
+                })
+                    .then(function (newUser) {
+                    return newUser.save();
+                })
+                    .catch(function (e) {
+                    return e;
+                })];
         });
     });
 }

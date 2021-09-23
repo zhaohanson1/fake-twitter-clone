@@ -1,13 +1,15 @@
 import React from "react";
-import Grid from "@material-ui/core/Grid";
-import { createTheme } from "@material-ui/core/styles";
+import Grid from "@mui/material/Grid";
+import { createTheme, adaptV4Theme } from "@mui/material/styles";
 import {
   Avatar,
   Box,
   CssBaseline,
   ThemeProvider,
+  Theme,
+  StyledEngineProvider,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 
 import AccessSplash from "./AccessSplash";
 import LoginPanel from "./LoginPanel";
@@ -15,7 +17,14 @@ import RegisterPanel from "./RegisterPanel";
 
 import "./css/home.css";
 
-const theme = createTheme({
+
+declare module '@mui/styles/defaultTheme' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface DefaultTheme extends Theme {}
+}
+
+
+const theme = createTheme(adaptV4Theme({
   palette: {
     primary: {
       light: "#5472d3",
@@ -30,7 +39,7 @@ const theme = createTheme({
       contrastText: "#000",
     },
   },
-});
+}));
 
 type HomeProps = {};
 type HomeState = {
@@ -78,37 +87,39 @@ class HomePage extends React.Component<HomeProps, HomeState> {
   render(): React.ReactNode {
     var { accessPanel } = this.state;
     return (
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Box className="root" bgcolor="secondary.main">
-          <Grid container component="main" className="root">
-            <Grid xs={false} item sm={4} md={7} className="image" />
-            <Grid
-              xs={12}
-              sm={8}
-              md={5}
-              container
-              item
-              direction="column"
-              justifyContent="flex-start"
-              alignItems="center"
-            >
-              <Box mx={8} my={4}>
-                <Grid
-                  item
-                  style={{ justifyContent: "center", display: "flex" }}
-                >
-                  <Avatar>XD</Avatar>
-                </Grid>
-                <Grid item>
-                  <Typography variant="h4">Join the conversation.</Typography>
-                </Grid>
-              </Box>
-              {this.renderSwitch(accessPanel)}
+      <StyledEngineProvider injectFirst>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Box className="root" bgcolor="secondary.main">
+            <Grid container component="main" className="root">
+              <Grid xs={false} item sm={4} md={7} className="image" />
+              <Grid
+                xs={12}
+                sm={8}
+                md={5}
+                container
+                item
+                direction="column"
+                justifyContent="flex-start"
+                alignItems="center"
+              >
+                <Box mx={8} my={4}>
+                  <Grid
+                    item
+                    style={{ justifyContent: "center", display: "flex" }}
+                  >
+                    <Avatar>XD</Avatar>
+                  </Grid>
+                  <Grid item>
+                    <Typography variant="h4">Join the conversation.</Typography>
+                  </Grid>
+                </Box>
+                {this.renderSwitch(accessPanel)}
+              </Grid>
             </Grid>
-          </Grid>
-        </Box>
-      </ThemeProvider>
+          </Box>
+        </ThemeProvider>
+      </StyledEngineProvider>
     );
   }
 }

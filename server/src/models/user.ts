@@ -1,3 +1,5 @@
+import { resolve } from "path/posix";
+
 //Require Mongoose
 var mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
@@ -41,18 +43,26 @@ export interface UserArgs {
 }
 
 /* TODO: read how to write good to db */
-export function createUser(args: UserArgs) {
+export async function createUser(args: UserArgs) {
   const saltRounds = 10;
-  bcrypt.genSalt(saltRounds, function (_err: Error, salt: string) {
-    bcrypt.hash(args["password"], salt, function (_err: Error, hash: string) {
+
+  return bcrypt
+    .genSalt(saltRounds)
+    .then((salt: string) => {
       args["passwordSalt"] = salt;
+      return bcrypt.hash(args["password"], salt);
+    })
+    .then((hash: string) => {
       args["passwordHash"] = hash;
       args["creationDate"] = new Date();
-      let newUser = new User(args);
-      //console.log(newUser);
-      newUser.save();
+      return new User(args);
+    })
+    .then((newUser: typeof User) => {
+      return newUser.save();
+    })
+    .catch((e: Error) => {
+      return e;
     });
-  });
 }
 
 export async function findUser(params: object) {

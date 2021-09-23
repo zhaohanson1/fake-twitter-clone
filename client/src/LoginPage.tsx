@@ -1,4 +1,4 @@
-import { Box, CssBaseline } from "@material-ui/core";
+import { Box, CssBaseline } from "@mui/material";
 import React from "react";
 import LoginForm from "./LoginForm";
 
