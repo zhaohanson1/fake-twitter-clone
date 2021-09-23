@@ -72,7 +72,7 @@ function createUser(args) {
         bcrypt.hash(args["password"], salt, function (_err, hash) {
             args["passwordSalt"] = salt;
             args["passwordHash"] = hash;
-            args['creationDate'] = new Date();
+            args["creationDate"] = new Date();
             var newUser = new exports.User(args);
             //console.log(newUser);
             newUser.save();
@@ -97,7 +97,13 @@ function validateUser(args) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    query = { username: args['username'] } || { email: args['email'] };
+                    query = {};
+                    if (args["username"] !== undefined) {
+                        query = { username: args["username"] };
+                    }
+                    else if (args["email"] !== undefined) {
+                        query = { email: args["email"] };
+                    }
                     if (!query) {
                         // idk something went wrong
                         return [2 /*return*/, false];
@@ -108,8 +114,8 @@ function validateUser(args) {
                     if (!user) {
                         return [2 /*return*/, false];
                     }
-                    password = args['password'];
-                    hash = user.get('passwordHash');
+                    password = args["password"];
+                    hash = user.get("passwordHash");
                     console.log(user);
                     console.log("Pass:" + password);
                     _a.label = 2;

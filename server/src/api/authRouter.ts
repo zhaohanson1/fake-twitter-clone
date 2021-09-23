@@ -4,7 +4,6 @@ import { Router, Request, Response } from "express";
 export const authRouter = Router({ mergeParams: true });
 import { createUser, validateUser, UserArgs } from "../models/user";
 
-
 authRouter.post("/signup", async (req: Request, res: Response) => {
   var args: UserArgs = {
     email: req.body.email,
@@ -17,8 +16,14 @@ authRouter.post("/signup", async (req: Request, res: Response) => {
 
   createUser(args);
   //TODO: catch error and throw to frontend
+  /*
+    Cases:
+      Username / email already in use
+      invalid pw (front-end should have validation)
+      other??? 
+  */
 
-  res.redirect("http://" + process.env.HOST + ":" + process.env.WEBPACK_PORT);
+  res.redirect("http://localhost:" + process.env.WEBPACK_PORT);
 });
 
 authRouter.post("/login", async (req: Request, res: Response) => {
@@ -30,19 +35,18 @@ authRouter.post("/login", async (req: Request, res: Response) => {
     passwordSalt: null,
     passwordHash: null,
   };
-
+  console.log(req.body);
   if (await validateUser(args)) {
     /*
       give login token???
       store login token in db
         associate this with user
     */
-    res.json({'okay': true});
+    res.json({ success: true });
   } else {
     // error or something
-    res.json({'okay': false});
+    res.json({ success: false });
   }
-  
 });
 
 module.exports = authRouter;

@@ -8,7 +8,7 @@ var regEmail =
   /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
 var UserSchema = new Schema({
-  _id: { type:  mongoose.Schema.Types.ObjectId, auto: true },
+  _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
   name: { type: String },
   email: {
     type: String,
@@ -47,7 +47,7 @@ export function createUser(args: UserArgs) {
     bcrypt.hash(args["password"], salt, function (_err: Error, hash: string) {
       args["passwordSalt"] = salt;
       args["passwordHash"] = hash;
-      args['creationDate'] = new Date();
+      args["creationDate"] = new Date();
       let newUser = new User(args);
       //console.log(newUser);
       newUser.save();
@@ -62,8 +62,14 @@ export async function findUser(params: object) {
 }
 
 export async function validateUser(args: UserArgs) {
- 
-  const query = {username: args['username']} || {email: args['email']};
+  var query = {};
+
+  if (args["username"] !== undefined) {
+    query = { username: args["username"] };
+  } else if (args["email"] !== undefined) {
+    query = { email: args["email"] };
+  }
+
   if (!query) {
     // idk something went wrong
     return false;
@@ -72,9 +78,9 @@ export async function validateUser(args: UserArgs) {
   if (!user) {
     return false;
   }
-  
-  const password = args['password'];
-  const hash = user.get('passwordHash');
+
+  const password = args["password"];
+  const hash = user.get("passwordHash");
 
   console.log(user);
   console.log("Pass:" + password);

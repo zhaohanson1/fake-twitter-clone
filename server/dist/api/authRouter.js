@@ -54,7 +54,13 @@ exports.authRouter.post("/signup", function (req, res) { return __awaiter(void 0
         };
         user_1.createUser(args);
         //TODO: catch error and throw to frontend
-        res.redirect("http://" + process.env.HOST + ":" + process.env.WEBPACK_PORT);
+        /*
+          Cases:
+            Username / email already in use
+            invalid pw (front-end should have validation)
+            other???
+        */
+        res.redirect("http://localhost:" + process.env.WEBPACK_PORT);
         return [2 /*return*/];
     });
 }); });
@@ -71,6 +77,7 @@ exports.authRouter.post("/login", function (req, res) { return __awaiter(void 0,
                     passwordSalt: null,
                     passwordHash: null,
                 };
+                console.log(req.body);
                 return [4 /*yield*/, user_1.validateUser(args)];
             case 1:
                 if (_a.sent()) {
@@ -79,11 +86,11 @@ exports.authRouter.post("/login", function (req, res) { return __awaiter(void 0,
                       store login token in db
                         associate this with user
                     */
-                    res.json({ 'okay': true });
+                    res.json({ success: true });
                 }
                 else {
                     // error or something
-                    res.json({ 'okay': false });
+                    res.json({ success: false });
                 }
                 return [2 /*return*/];
         }
