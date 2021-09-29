@@ -36,13 +36,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUser = exports.validateUser = exports.findUser = exports.createUser = exports.User = void 0;
+exports.deleteUser = exports.updateUser = exports.validateUser = exports.findUser = exports.createUser = exports.User = void 0;
 //Require Mongoose
 var mongoose = require("mongoose");
 var bcrypt = require("bcrypt");
 //Define a schema
 var Schema = mongoose.Schema;
-var regEmail = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+var regEmail = /^[-!#$%&'*+/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+/0-9=?A-Z^_a-z{|}~])*@[a-zA-Z](-?[a-zA-Z0-9])*(\.[a-zA-Z](-?[a-zA-Z0-9])*)+$/;
 var UserSchema = new Schema({
     _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
     name: { type: String },
@@ -52,60 +52,125 @@ var UserSchema = new Schema({
         lowercase: true,
         trim: true,
         maxLength: 320,
-        required: true,
-        match: [regEmail, "Invalid email format"],
+        required: [true, "Email is required."],
+        match: [regEmail, "Invalid email format."],
     },
     phone: { type: String },
     creationDate: { type: Date },
     lastLogin: { type: Date },
-    username: { type: String, required: true, unique: true, maxLength: 256 },
+    username: {
+        type: String,
+        required: [true, "Username is required."],
+        unique: [true, "Username has already been used."],
+        maxLength: 256,
+    },
     passwordSalt: { type: String, required: true },
     passwordHash: { type: String, required: true },
 });
 // Compile model from schema
 exports.User = mongoose.model("AccountModel", UserSchema);
 exports.User.init();
-/* TODO: read how to write good to db */
-function createUser(args) {
+var saltRounds = 10;
+function saltAndHash(password) {
     return __awaiter(this, void 0, void 0, function () {
-        var saltRounds;
         return __generator(this, function (_a) {
-            saltRounds = 10;
             return [2 /*return*/, bcrypt
                     .genSalt(saltRounds)
                     .then(function (salt) {
-                    args["passwordSalt"] = salt;
-                    return bcrypt.hash(args["password"], salt);
+                    return new Promise(function (resolve, reject) {
+                        bcrypt.hash(password, salt, function (err, hash) {
+                            if (err) {
+                                reject(err);
+                            }
+                            else {
+                                resolve({ salt: salt, hash: hash });
+                            }
+                        });
+                    });
                 })
-                    .then(function (hash) {
-                    args["passwordHash"] = hash;
-                    args["creationDate"] = new Date();
-                    return new exports.User(args);
-                })
-                    .then(function (newUser) {
-                    return newUser.save();
-                })
-                    .catch(function (e) {
-                    return e;
+                    .catch(function (err) {
+                    throw err;
                 })];
+        });
+    });
+}
+function validate(user, errMessage) {
+    var err = user.validateSync();
+    if (err) {
+        if (errMessage) {
+            throw new Error(errMessage);
+        }
+        else {
+            throw err;
+        }
+    }
+}
+function createUser(args) {
+    return __awaiter(this, void 0, void 0, function () {
+        var emailUser, usernameUser, user, bcryptObj, err_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 5, , 6]);
+                    if (args["email"] == undefined || args["email"] == "") {
+                        throw new Error("Email is missing.");
+                    }
+                    if (args["username"] == undefined || args["username"] == "") {
+                        throw new Error("Username is missing.");
+                    }
+                    if (args["password"] == undefined || args["password"] == "") {
+                        throw new Error("Password is missing.");
+                    }
+                    return [4 /*yield*/, findUser({ email: args["email"] })];
+                case 1:
+                    emailUser = _a.sent();
+                    if (emailUser !== null) {
+                        throw new Error("Email has already been used.");
+                    }
+                    return [4 /*yield*/, findUser({ username: args["username"] })];
+                case 2:
+                    usernameUser = _a.sent();
+                    if (usernameUser !== null) {
+                        throw new Error("Username has already been used.");
+                    }
+                    if (args["username"].length < 1 || args["username"].length > 256) {
+                        throw new Error("Username is invalid length. Username should be at least 1 character long and less than or equal to 256 characters");
+                    }
+                    user = new exports.User();
+                    user.email = args["email"];
+                    user.username = args["username"];
+                    return [4 /*yield*/, saltAndHash(args["password"])];
+                case 3:
+                    bcryptObj = _a.sent();
+                    user.passwordSalt = bcryptObj.salt;
+                    user.passwordHash = bcryptObj.hash;
+                    user.creationDate = new Date();
+                    //validate(user);
+                    return [4 /*yield*/, user.save()];
+                case 4:
+                    //validate(user);
+                    _a.sent();
+                    return [2 /*return*/, user];
+                case 5:
+                    err_1 = _a.sent();
+                    throw err_1;
+                case 6: return [2 /*return*/];
+            }
         });
     });
 }
 exports.createUser = createUser;
 function findUser(params) {
     return __awaiter(this, void 0, void 0, function () {
-        var user;
         return __generator(this, function (_a) {
-            user = exports.User.findOne(params);
-            // if doesnt exists, throw not found, else return user
-            return [2 /*return*/, user];
+            return [2 /*return*/, exports.User.findOne(params).exec()];
         });
     });
 }
 exports.findUser = findUser;
 function validateUser(args) {
     return __awaiter(this, void 0, void 0, function () {
-        var query, user, password, hash, result, e_1;
+        var query, user, password, hash;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -116,40 +181,43 @@ function validateUser(args) {
                     else if (args["email"] !== undefined) {
                         query = { email: args["email"] };
                     }
-                    if (!query) {
-                        // idk something went wrong
-                        return [2 /*return*/, false];
+                    else {
+                        throw new Error("Missing credentials");
                     }
                     return [4 /*yield*/, findUser(query)];
                 case 1:
                     user = _a.sent();
                     if (!user) {
-                        return [2 /*return*/, false];
+                        throw new Error("User not found.");
                     }
                     password = args["password"];
                     hash = user.get("passwordHash");
-                    console.log(user);
-                    console.log("Pass:" + password);
-                    _a.label = 2;
-                case 2:
-                    _a.trys.push([2, 4, , 5]);
-                    return [4 /*yield*/, bcrypt.compare(password, hash)];
-                case 3:
-                    result = _a.sent();
-                    return [3 /*break*/, 5];
-                case 4:
-                    e_1 = _a.sent();
-                    console.log(e_1);
-                    return [2 /*return*/, false];
-                case 5: return [2 /*return*/, result];
+                    return [2 /*return*/, bcrypt.compare(password, hash)];
             }
         });
     });
 }
 exports.validateUser = validateUser;
-function deleteUser() {
-    // TODO
-    return false;
+function updateUser(userArgs, attributes) {
+    return exports.User.updateOne(userArgs, attributes);
+}
+exports.updateUser = updateUser;
+function deleteUser(args) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, exports.User.deleteOne(args).catch(function (err) {
+                    if (err)
+                        throw err;
+                })];
+        });
+    });
 }
 exports.deleteUser = deleteUser;
-module.exports = { User: exports.User, createUser: createUser, findUser: findUser, validateUser: validateUser };
+module.exports = {
+    User: exports.User,
+    createUser: createUser,
+    findUser: findUser,
+    validateUser: validateUser,
+    updateUser: updateUser,
+    deleteUser: deleteUser,
+};

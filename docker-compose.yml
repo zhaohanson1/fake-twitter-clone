@@ -1,0 +1,34 @@
+version: '3.4'
+
+services:
+  jabber:
+    image: jabber
+    container_name: jab
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: development
+    ports:
+      - 3000:3000
+    networks:
+      jabber_network:
+  mongodb:
+    image : mongo
+    container_name: jabber_mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongoadmin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: initDB
+    volumes:
+    - mongodb_data_container:/data/db
+    ports:
+    - 27017:27017
+    restart: always
+    networks:
+      jabber_network:
+
+networks:
+  jabber_network:
+volumes:
+  mongodb_data_container:

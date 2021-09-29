@@ -31,16 +31,14 @@ const LoginForm = () => {
       .then((data) => {
         console.log(data);
         if (data.success) {
-          console.log("yeah");
           setSuccessOpen({
             successOpen: true,
-            successMsg: "This is a success alert.",
+            successMsg: "Login success.",
           });
         } else {
-          console.log("error");
           setErrOpen({
             errOpen: true,
-            errMsg: "This is an error alert.",
+            errMsg: data.alert,
           });
         }
       });

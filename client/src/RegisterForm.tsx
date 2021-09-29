@@ -35,16 +35,14 @@ const RegisterForm = () => {
       .then((data) => {
         console.log(data);
         if (data.success) {
-          console.log("yeah");
           setSuccessOpen({
             successOpen: true,
-            successMsg: "This is a success alert.",
+            successMsg: "Register success.",
           });
         } else {
-          console.log("error");
           setErrOpen({
             errOpen: true,
-            errMsg: data.error_message,
+            errMsg: data.alert,
           });
         }
       });

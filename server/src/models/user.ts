@@ -1,5 +1,3 @@
-import { resolve } from "path/posix";
-
 //Require Mongoose
 var mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
@@ -7,7 +5,7 @@ const bcrypt = require("bcrypt");
 //Define a schema
 var Schema = mongoose.Schema;
 var regEmail =
-  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+  /^[-!#$%&'*+/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+/0-9=?A-Z^_a-z{|}~])*@[a-zA-Z](-?[a-zA-Z0-9])*(\.[a-zA-Z](-?[a-zA-Z0-9])*)+$/;
 
 var UserSchema = new Schema({
   _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
@@ -18,13 +16,18 @@ var UserSchema = new Schema({
     lowercase: true,
     trim: true,
     maxLength: 320,
-    required: true,
-    match: [regEmail, "Invalid email format"],
+    required: [true, "Email is required."],
+    match: [regEmail, "Invalid email format."],
   },
   phone: { type: String },
   creationDate: { type: Date },
   lastLogin: { type: Date },
-  username: { type: String, required: true, unique: true, maxLength: 256 },
+  username: {
+    type: String,
+    required: [true, "Username is required."],
+    unique: [true, "Username has already been used."],
+    maxLength: 256,
+  },
   passwordSalt: { type: String, required: true },
   passwordHash: { type: String, required: true },
 });
@@ -33,80 +36,162 @@ var UserSchema = new Schema({
 export var User = mongoose.model("AccountModel", UserSchema);
 User.init();
 
-export interface UserArgs {
-  email: string;
-  username: string;
+interface validationArgs {
+  username?: string;
+  email?: string;
   password: string;
-  creationDate: Date | null;
-  passwordSalt: string | null;
-  passwordHash: string | null;
 }
 
-/* TODO: read how to write good to db */
-export async function createUser(args: UserArgs) {
-  const saltRounds = 10;
+const saltRounds = 10;
 
+async function saltAndHash(password: string) {
   return bcrypt
     .genSalt(saltRounds)
     .then((salt: string) => {
-      args["passwordSalt"] = salt;
-      return bcrypt.hash(args["password"], salt);
+      return new Promise((resolve, reject) => {
+        bcrypt.hash(password, salt, (err: any, hash: string) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve({ salt: salt, hash: hash });
+          }
+        });
+      });
     })
-    .then((hash: string) => {
-      args["passwordHash"] = hash;
-      args["creationDate"] = new Date();
-      return new User(args);
-    })
-    .then((newUser: typeof User) => {
-      return newUser.save();
-    })
-    .catch((e: Error) => {
-      return e;
+    .catch((err: any) => {
+      throw err;
     });
 }
 
-export async function findUser(params: object) {
-  var user = User.findOne(params);
-  // if doesnt exists, throw not found, else return user
-  return user;
+function validate(user: typeof User, errMessage?: string) {
+  var err = user.validateSync();
+  if (err) {
+    if (errMessage) {
+      throw new Error(errMessage);
+    } else {
+      throw err;
+    }
+  }
 }
 
-export async function validateUser(args: UserArgs) {
+export async function createUser(args: validationArgs) {
+  try {
+    if (args["email"] == undefined || args["email"] == "") {
+      throw new Error("Email is missing.");
+    }
+
+    if (args["username"] == undefined || args["username"] == "") {
+      throw new Error("Username is missing.");
+    }
+
+    if (args["password"] == undefined || args["password"] == "") {
+      throw new Error("Password is missing.");
+    }
+
+    var emailUser = await findUser({ email: args["email"] });
+    
+    if (emailUser !== null) {
+      throw new Error("Email has already been used.");
+    }
+    var usernameUser = await findUser({ username: args["username"] });
+    if (usernameUser !== null) {
+      throw new Error("Username has already been used.");
+    }
+
+    if (args["username"].length < 1 || args["username"].length > 256) {
+      throw new Error(
+        "Username is invalid length. Username should be at least 1 character long and less than or equal to 256 characters"
+      );
+    }
+
+    var user = new User();
+    user.email = args["email"];
+    user.username = args["username"];
+    var bcryptObj = await saltAndHash(args["password"]);
+    user.passwordSalt = bcryptObj.salt;
+    user.passwordHash = bcryptObj.hash;
+    user.creationDate = new Date();
+    //validate(user);
+    await user.save();
+    return user;
+  } catch (err: any) {
+    throw err;
+  }
+  /*
+  var userParams = {
+    email: args["email"],
+    username: args["username"],
+    passwordSalt: "",
+    passwordHash: "",
+    creationDate: new Date(0),
+  };
+
+  return saltAndHash(args["password"])
+    .then((bcryptObj) => {
+      userParams["passwordSalt"] = bcryptObj.salt;
+      userParams["passwordHash"] = bcryptObj.hash;
+      userParams["creationDate"] = new Date();
+      return userParams;
+    }).then((params: typeof userParams) => {
+      var user = new User(params);
+      user.save((err: any) => {
+        if (err) {
+          console.log(err);
+          throw new Error("Error in ");
+        }
+      })
+      return user;
+    }).catch((err: any) => {
+      if (err) {
+        console.log(err);
+        throw new Error("Something went wrong.");
+      };
+    });
+    */
+}
+
+export async function findUser(params: object) {
+  return User.findOne(params).exec();
+}
+
+export async function validateUser(args: validationArgs): Promise<any> {
   var query = {};
 
   if (args["username"] !== undefined) {
     query = { username: args["username"] };
   } else if (args["email"] !== undefined) {
     query = { email: args["email"] };
+  } else {
+    throw new Error("Missing credentials");
   }
 
-  if (!query) {
-    // idk something went wrong
-    return false;
-  }
   const user = await findUser(query);
   if (!user) {
-    return false;
+    throw new Error("User not found.");
   }
 
   const password = args["password"];
   const hash = user.get("passwordHash");
 
-  console.log(user);
-  console.log("Pass:" + password);
-
-  try {
-    var result = await bcrypt.compare(password, hash);
-  } catch (e) {
-    console.log(e);
-    return false;
-  }
-  return result;
+  return bcrypt.compare(password, hash);
 }
 
-export function deleteUser() {
-  // TODO
-  return false;
+export function updateUser(userArgs: object, attributes: object) {
+  return User.updateOne(userArgs, attributes);
 }
 
-module.exports = { User, createUser, findUser, validateUser };
+export async function deleteUser(args: object) {
+  return User.deleteOne(args).catch((err: any) => {
+    if (err) throw err;
+  });
+}
+
+module.exports = {
+  User,
+  createUser,
+  findUser,
+  validateUser,
+  updateUser,
+  deleteUser,
+};
+

@@ -36,68 +36,28 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authRouter = void 0;
-var express_1 = require("express");
-// eslint-disable-next-line new-cap
-exports.authRouter = express_1.Router({ mergeParams: true });
-var passport = require("passport");
-var auth_controller = require("../controllers/auth_controller");
-exports.authRouter.post("/signup", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var args, json_response;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                args = {
-                    email: req.body.email,
-                    username: req.body.username,
-                    password: req.body.password,
-                };
-                return [4 /*yield*/, auth_controller.signup(args)];
-            case 1:
-                json_response = _a.sent();
-                res.json(json_response);
-                return [2 /*return*/];
-        }
-    });
-}); });
-exports.authRouter.post("/login", function (req, res, next) {
-    passport.authenticate("local", function (err, user, info) {
-        if (err) {
-            res.json({
-                success: false,
-                alert: err.message,
-                redirectURI: "/login",
-            });
-            return;
-        }
-        if (!user) {
-            res.json({
-                success: false,
-                alert: info.message,
-                redirectURI: null,
-            });
-            return;
-        }
-        res.json({ success: true, error_message: null, redirectURI: "/" });
-    })(req, res, next);
-    /*
-    
-    
-    if (await validateUser(args)) {
-      
-        give login token???
-        store login token in db
-          associate this with user
-      
-      res.json({ success: true });
-    } else {
-      // error or something
-      res.json({ success: false });
-    }
-    */
-});
-exports.authRouter.post("logout", function (req, res) {
-    req.logout();
-    res.json({ redirectURI: "/" });
-});
-module.exports = exports.authRouter;
+var user_1 = require("../models/user");
+module.exports = {
+    signup: function (args) { return __awaiter(void 0, void 0, void 0, function () {
+        var err_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, user_1.createUser({
+                            username: args["username"],
+                            password: args["password"],
+                            email: args["email"],
+                        })];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/, { success: true, alert: null }];
+                case 2:
+                    err_1 = _a.sent();
+                    console.log(err_1);
+                    return [2 /*return*/, { success: false, alert: err_1.message }];
+                case 3: return [2 /*return*/];
+            }
+        });
+    }); },
+};
