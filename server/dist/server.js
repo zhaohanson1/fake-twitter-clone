@@ -41,49 +41,56 @@ var cookieParser = require("cookie-parser");
 var bodyParser = require("body-parser");
 var passport = require("passport");
 var session = require("express-session");
-// Set up environment variables
-require("dotenv").config();
-// Set up database connection
-var db = require("./boot/connectDatabase");
-require("./boot/initPassport")();
+var MongoStore = require("connect-mongo");
 var app = express();
-app.use(express.static("../../public"));
-var oneDay = 1000 * 60 * 60 * 24;
-app.use(session({
-    secret: "bazinga",
-    resave: true,
-    saveUninitialized: true,
-    cookie: { maxAge: oneDay },
-}));
-app.use(passport.initialize());
-app.use(passport.session());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(cookieParser());
-app.use(cors());
-var pageRouter = require("./routes");
-var apiRouter = require("./api/apiRouter");
-var port = process.env.BACKEND_PORT || 3000;
-app.get("/api", function (_req, res) {
-    res.json({ message: "Hello from server!" });
-});
-app.use("/", pageRouter);
-app.use("/api", apiRouter);
 function init() {
     return __awaiter(this, void 0, void 0, function () {
+        var db, clientPromise, oneDay, pageRouter, apiRouter, port;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, db()];
-                case 1:
-                    _a.sent();
-                    app.listen(port, function () {
-                        console.log("Using " + process.env.NODE_ENV + " server");
-                        console.log("Listening on " + port);
-                    });
-                    return [2 /*return*/, app];
-            }
+            // Set up environment variables
+            require("dotenv").config();
+            db = require("./boot/connectDatabase");
+            clientPromise = db();
+            app.use(express.static("../../public"));
+            oneDay = 1000 * 60 * 60 * 24;
+            app.use(bodyParser.json());
+            app.use(bodyParser.urlencoded({ extended: true }));
+            app.use(cors());
+            app.use(session({
+                secret: "bazinga",
+                resave: false,
+                saveUninitialized: false,
+                store: MongoStore.create({
+                    clientPromise: clientPromise,
+                    collectionName: "sessions",
+                    ttl: oneDay / 1000,
+                }),
+                cookie: {
+                    sameSite: true,
+                    secure: process.env.NODE_ENV === "production",
+                    maxAge: oneDay,
+                },
+            }));
+            app.use(passport.initialize());
+            app.use(passport.session());
+            app.use(cookieParser());
+            require("./boot/initPassport")();
+            pageRouter = require("./routes");
+            apiRouter = require("./api/apiRouter");
+            port = process.env.BACKEND_PORT || 3000;
+            app.get("/api", function (_req, res) {
+                res.json({ message: "Hello from server!" });
+            });
+            app.use("/api", apiRouter);
+            app.use("/", pageRouter);
+            app.listen(port, function () {
+                console.log("Using " + process.env.NODE_ENV + " server");
+                console.log("Listening on " + port);
+            });
+            return [2 /*return*/, app];
         });
     });
 }
-module.exports.ready = init();
+var ready = init();
+module.exports.ready = ready;
 module.exports.server = app;

@@ -41,7 +41,7 @@ var LocalStrategy = require("passport-local").Strategy;
 var user_1 = require("../models/user");
 module.exports = function () {
     var _this = this;
-    passport.use('email-local', new LocalStrategy({
+    passport.use("email-local", new LocalStrategy({
         usernameField: "email",
         passwordField: "password",
     }, function (username, password, done) { return __awaiter(_this, void 0, void 0, function () {
@@ -73,7 +73,7 @@ module.exports = function () {
             }
         });
     }); }));
-    passport.use('usernamee-local', new LocalStrategy(function (username, password, done) { return __awaiter(_this, void 0, void 0, function () {
+    passport.use("username-local", new LocalStrategy(function (username, password, done) { return __awaiter(_this, void 0, void 0, function () {
         var user, validPassword, err_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -103,15 +103,11 @@ module.exports = function () {
         });
     }); }));
     passport.serializeUser(function (user, done) {
-        process.nextTick(function () {
-            return done(null, { id: user._id, username: user.username });
-        });
+        done(null, { id: user._id });
     });
     passport.deserializeUser(function (id, done) {
-        process.nextTick(function () {
-            return user_1.User.findById(id, function (err, user) {
-                done(err, user);
-            });
+        user_1.User.findById(id, function (err, user) {
+            done(err, user);
         });
     });
 };

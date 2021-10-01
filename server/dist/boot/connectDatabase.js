@@ -26,7 +26,7 @@ module.exports = function () {
     };
     //console.log(mongoDB);
     var connected = mongoose.connect(mongoDB, options).catch(function (err) {
-        console.log(err);
+        console.log(err.reason);
         process.exit(1);
     });
     //Get the default connection
@@ -36,5 +36,8 @@ module.exports = function () {
     db.once("open", function () {
         console.log("Connected to " + process.env.NODE_ENV + " " + dbname + " successfully");
     });
-    return connected;
+    var clientPromise = connected.then(function () {
+        return db.getClient();
+    });
+    return clientPromise;
 };

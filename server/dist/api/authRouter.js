@@ -61,12 +61,12 @@ exports.authRouter.post("/signup", function (req, res) { return __awaiter(void 0
     });
 }); });
 exports.authRouter.post("/login", function (req, res, next) {
-    passport.authenticate("local", function (err, user, info) {
+    passport.authenticate("email-local", function (err, user, info) {
         if (err) {
             res.json({
                 success: false,
                 alert: err.message,
-                redirectURI: "/login",
+                redirectURI: null,
             });
             return;
         }
@@ -76,28 +76,31 @@ exports.authRouter.post("/login", function (req, res, next) {
                 alert: info.message,
                 redirectURI: null,
             });
-            return;
         }
-        res.json({ success: true, error_message: null, redirectURI: "/" });
+        else {
+            req.logIn(user, function (err) {
+                if (err) {
+                    res.json({
+                        success: false,
+                        alert: err.message,
+                        redirectURI: null,
+                    });
+                }
+                else {
+                    res.json({ success: true, error_message: null, redirectURI: "/" });
+                }
+            });
+        }
     })(req, res, next);
-    /*
-    
-    
-    if (await validateUser(args)) {
-      
-        give login token???
-        store login token in db
-          associate this with user
-      
-      res.json({ success: true });
-    } else {
-      // error or something
-      res.json({ success: false });
-    }
-    */
 });
-exports.authRouter.post("logout", function (req, res) {
-    req.logout();
+exports.authRouter.post("/logout", function (req, res) {
+    req.logOut();
     res.json({ redirectURI: "/" });
+});
+exports.authRouter.get("/user", function (req, res) {
+    res.json({ item: "nah" });
+});
+exports.authRouter.get("/*", function (_req, res) {
+    res.json({ message: "Invalid request" });
 });
 module.exports = exports.authRouter;

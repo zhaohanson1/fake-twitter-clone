@@ -89,7 +89,7 @@ export async function createUser(args: validationArgs) {
     }
 
     var emailUser = await findUser({ email: args["email"] });
-    
+
     if (emailUser !== null) {
       throw new Error("Email has already been used.");
     }
@@ -194,4 +194,3 @@ module.exports = {
   updateUser,
   deleteUser,
 };
-

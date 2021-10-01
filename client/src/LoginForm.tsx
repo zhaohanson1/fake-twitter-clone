@@ -29,7 +29,6 @@ const LoginForm = () => {
     fetch("/api/auth/login", reqOpts)
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.success) {
           setSuccessOpen({
             successOpen: true,
@@ -40,6 +39,10 @@ const LoginForm = () => {
             errOpen: true,
             errMsg: data.alert,
           });
+        }
+
+        if (data.redirectURI) {
+          window.location.href = data.redirectURI;
         }
       });
   }

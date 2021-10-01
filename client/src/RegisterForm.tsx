@@ -33,7 +33,6 @@ const RegisterForm = () => {
     fetch("/api/auth/signup", reqOpts)
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.success) {
           setSuccessOpen({
             successOpen: true,
@@ -44,6 +43,10 @@ const RegisterForm = () => {
             errOpen: true,
             errMsg: data.alert,
           });
+        }
+
+        if (data.redirectURI) {
+          window.location.href = data.redirectURI;
         }
       });
   }

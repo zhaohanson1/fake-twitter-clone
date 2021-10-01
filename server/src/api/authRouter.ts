@@ -18,48 +18,51 @@ authRouter.post("/signup", async (req: Request, res: Response) => {
 });
 
 authRouter.post("/login", (req: Request, res: Response, next: any) => {
-  passport.authenticate("local", (err: Error, user: typeof User, info: any) => {
-    
-    if (err) {
-      res.json({
-        success: false,
-        alert: err.message,
-        redirectURI: "/login",
-      });
-      return;
+  passport.authenticate(
+    "email-local",
+    (err: Error, user: typeof User, info: any) => {
+      if (err) {
+        res.json({
+          success: false,
+          alert: err.message,
+          redirectURI: null,
+        });
+        return;
+      }
+      if (!user) {
+        res.json({
+          success: false,
+          alert: info.message,
+          redirectURI: null,
+        });
+      } else {
+        req.logIn(user, (err) => {
+          if (err) {
+            res.json({
+              success: false,
+              alert: err.message,
+              redirectURI: null,
+            });
+          } else {
+            res.json({ success: true, error_message: null, redirectURI: "/" });
+          }
+        });
+      }
     }
-    if (!user) {
-      res.json({
-        success: false,
-        alert: info.message,
-        redirectURI: null,
-      });
-      return;
-    }
-
-    res.json({ success: true, error_message: null, redirectURI: "/" });
-  })(req, res, next);
-
-  /*
-  
-  
-  if (await validateUser(args)) {
-    
-      give login token???
-      store login token in db
-        associate this with user
-    
-    res.json({ success: true });
-  } else {
-    // error or something
-    res.json({ success: false });
-  }
-  */
+  )(req, res, next);
 });
 
-authRouter.post("logout", (req: Request, res: Response) => {
-  req.logout();
-  res.json({redirectURI: "/"});
-  
+authRouter.post("/logout", (req: Request, res: Response) => {
+  req.logOut();
+  res.json({ redirectURI: "/" });
 });
+
+authRouter.get("/user", (req, res) => {
+  res.json({ item: "nah" });
+});
+
+authRouter.get("/*", (_req, res) => {
+  res.json({ message: "Invalid request" });
+});
+
 module.exports = authRouter;
