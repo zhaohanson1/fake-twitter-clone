@@ -1,3 +1,5 @@
+import { Query } from "mongoose";
+
 //Require Mongoose
 var mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
@@ -63,47 +65,39 @@ async function saltAndHash(password: string) {
     });
 }
 
-function validate(user: typeof User, errMessage?: string) {
-  var err = user.validateSync();
-  if (err) {
-    if (errMessage) {
-      throw new Error(errMessage);
-    } else {
-      throw err;
-    }
+async function validate(args: validationArgs) {
+  if (args["email"] == undefined || args["email"] == "") {
+    throw new Error("Email is missing.");
+  }
+
+  if (args["username"] == undefined || args["username"] == "") {
+    throw new Error("Username is missing.");
+  }
+
+  if (args["password"] == undefined || args["password"] == "") {
+    throw new Error("Password is missing.");
+  }
+
+  var emailUser = await findUser({ email: args["email"] });
+
+  if (emailUser !== null) {
+    throw new Error("Email has already been used.");
+  }
+  var usernameUser = await findUser({ username: args["username"] });
+  if (usernameUser !== null) {
+    throw new Error("Username has already been used.");
+  }
+
+  if (args["username"].length < 1 || args["username"].length > 256) {
+    throw new Error(
+      "Username is invalid length. Username should be at least 1 character long and less than or equal to 256 characters"
+    );
   }
 }
 
 export async function createUser(args: validationArgs) {
   try {
-    if (args["email"] == undefined || args["email"] == "") {
-      throw new Error("Email is missing.");
-    }
-
-    if (args["username"] == undefined || args["username"] == "") {
-      throw new Error("Username is missing.");
-    }
-
-    if (args["password"] == undefined || args["password"] == "") {
-      throw new Error("Password is missing.");
-    }
-
-    var emailUser = await findUser({ email: args["email"] });
-
-    if (emailUser !== null) {
-      throw new Error("Email has already been used.");
-    }
-    var usernameUser = await findUser({ username: args["username"] });
-    if (usernameUser !== null) {
-      throw new Error("Username has already been used.");
-    }
-
-    if (args["username"].length < 1 || args["username"].length > 256) {
-      throw new Error(
-        "Username is invalid length. Username should be at least 1 character long and less than or equal to 256 characters"
-      );
-    }
-
+    validate(args);
     var user = new User();
     user.email = args["email"];
     user.username = args["username"];
@@ -111,43 +105,11 @@ export async function createUser(args: validationArgs) {
     user.passwordSalt = bcryptObj.salt;
     user.passwordHash = bcryptObj.hash;
     user.creationDate = new Date();
-    //validate(user);
     await user.save();
     return user;
   } catch (err: any) {
     throw err;
   }
-  /*
-  var userParams = {
-    email: args["email"],
-    username: args["username"],
-    passwordSalt: "",
-    passwordHash: "",
-    creationDate: new Date(0),
-  };
-
-  return saltAndHash(args["password"])
-    .then((bcryptObj) => {
-      userParams["passwordSalt"] = bcryptObj.salt;
-      userParams["passwordHash"] = bcryptObj.hash;
-      userParams["creationDate"] = new Date();
-      return userParams;
-    }).then((params: typeof userParams) => {
-      var user = new User(params);
-      user.save((err: any) => {
-        if (err) {
-          console.log(err);
-          throw new Error("Error in ");
-        }
-      })
-      return user;
-    }).catch((err: any) => {
-      if (err) {
-        console.log(err);
-        throw new Error("Something went wrong.");
-      };
-    });
-    */
 }
 
 export async function findUser(params: object) {
@@ -176,6 +138,14 @@ export async function validateUser(args: validationArgs): Promise<any> {
   return bcrypt.compare(password, hash);
 }
 
+/**
+ *
+ *
+ * @export
+ * @param {object} Filter: an object that contains attribute value pairs to find matching users
+ * @param {object | Array} Update: replace all matching user's attributes with corresponding value
+ * @returns {Query}
+ */
 export function updateUser(userArgs: object, attributes: object) {
   return User.updateOne(userArgs, attributes);
 }

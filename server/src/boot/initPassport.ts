@@ -12,6 +12,7 @@ module.exports = function () {
       },
       async (username: string, password: string, done: any) => {
         try {
+          console.log("awaiting finding user");
           var user: typeof User = await findUser({ email: username });
           if (!user) {
             return done(null, false, { message: "User cannot be found." });
@@ -21,7 +22,7 @@ module.exports = function () {
             username: user.username,
             password: password,
           });
-
+          console.log("awaiting password validation");
           if (!validPassword) {
             return done(null, false, { message: "Incorrect password." });
           }
@@ -61,8 +62,8 @@ module.exports = function () {
     done(null, { id: user._id });
   });
 
-  passport.deserializeUser(function (id: any, done: any) {
-    User.findById(id, function (err: Error, user: typeof User) {
+  passport.deserializeUser(function (user: any, done: any) {
+    User.findById(user.id, function (err: Error, user: typeof User) {
       done(err, user);
     });
   });

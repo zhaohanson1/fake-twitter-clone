@@ -26,6 +26,7 @@ module.exports = function () {
     };
     //console.log(mongoDB);
     var connected = mongoose.connect(mongoDB, options).catch(function (err) {
+        console.log("Could not connect");
         console.log(err.reason);
         process.exit(1);
     });

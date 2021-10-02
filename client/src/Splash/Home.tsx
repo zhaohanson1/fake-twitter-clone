@@ -12,8 +12,8 @@ import {
 } from "@mui/material";
 
 import AccessSplash from "./AccessSplash";
-import LoginPanel from "./LoginPanel";
-import RegisterPanel from "./RegisterPanel";
+import LoginPanel from "../Login/LoginPanel";
+import RegisterPanel from "../Register/RegisterPanel";
 
 import "./css/home.css";
 

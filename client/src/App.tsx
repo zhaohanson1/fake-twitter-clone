@@ -1,8 +1,17 @@
-import React from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-
-import { ThemeProvider, Theme, StyledEngineProvider, createTheme } from "@mui/material/styles";
-import makeStyles from '@mui/styles/makeStyles';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from "react-router-dom";
+import useUser from "./useUser";
+import {
+  ThemeProvider,
+  Theme,
+  StyledEngineProvider,
+  createTheme,
+} from "@mui/material/styles";
+import makeStyles from "@mui/styles/makeStyles";
 const theme = createTheme();
 
 const useStyles = makeStyles((theme) => {
@@ -11,45 +20,33 @@ const useStyles = makeStyles((theme) => {
   }
 });
 
-import Home from "./Home";
-import Login from "./LoginPage";
-import Register from "./RegisterPage";
+import Home from "./Splash/Home";
+import Login from "./Login/LoginPage";
+import Register from "./Register/RegisterPage";
+import Dashboard from "./Dashboard/DashboardPage";
 
-
-declare module '@mui/styles/defaultTheme' {
+declare module "@mui/styles/defaultTheme" {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface DefaultTheme extends Theme {}
 }
 
+const App = () => {
+  const user = useUser();
 
-/**
- *
- *
- * @class App
- * @extends {React.Component}
- */
-class App extends React.Component {
-  /**
-   *
-   *
-   * @return {React.ReactNode}
-   * @memberof App
-   */
-  render() {
-    return (
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>
-          <Router>
-            <Switch>
-              <Route exact path="/" component={Home} />
-              <Route path="/login" component={Login} />
-              <Route path="/register" component={Register} />
-            </Switch>
-          </Router>
-        </ThemeProvider>
-      </StyledEngineProvider>
-    );
-  }
-}
+  return (
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <Router>
+          <Switch>
+            <Route path="/dashboard" component={Dashboard} />
+            <Route path="/" component={Home} />
+            <Route path="/login" component={Login} />
+            <Route path="/register" component={Register} />
+          </Switch>
+        </Router>
+      </ThemeProvider>
+    </StyledEngineProvider>
+  );
+};
 
 export default App;

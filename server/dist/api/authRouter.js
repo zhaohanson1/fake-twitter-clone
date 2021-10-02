@@ -42,6 +42,7 @@ var express_1 = require("express");
 exports.authRouter = express_1.Router({ mergeParams: true });
 var passport = require("passport");
 var auth_controller = require("../controllers/auth_controller");
+var user_controller = require("../controllers/user_controller");
 exports.authRouter.post("/signup", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var args, json_response;
     return __generator(this, function (_a) {
@@ -60,45 +61,59 @@ exports.authRouter.post("/signup", function (req, res) { return __awaiter(void 0
         }
     });
 }); });
-exports.authRouter.post("/login", function (req, res, next) {
-    passport.authenticate("email-local", function (err, user, info) {
-        if (err) {
-            res.json({
-                success: false,
-                alert: err.message,
-                redirectURI: null,
-            });
-            return;
-        }
-        if (!user) {
-            res.json({
-                success: false,
-                alert: info.message,
-                redirectURI: null,
-            });
-        }
-        else {
-            req.logIn(user, function (err) {
-                if (err) {
-                    res.json({
-                        success: false,
-                        alert: err.message,
-                        redirectURI: null,
-                    });
-                }
-                else {
-                    res.json({ success: true, error_message: null, redirectURI: "/" });
-                }
-            });
-        }
-    })(req, res, next);
-});
+exports.authRouter.post("/login", function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        passport.authenticate("email-local", function (err, user, info) {
+            console.log("a");
+            if (err) {
+                res.json({
+                    success: false,
+                    alert: err.message,
+                    redirectURI: null,
+                });
+                return;
+            }
+            if (!user) {
+                res.json({
+                    success: false,
+                    alert: info.message,
+                    redirectURI: null,
+                });
+            }
+            else {
+                req.logIn(user, function (err) {
+                    if (err) {
+                        res.json({
+                            success: false,
+                            alert: err.message,
+                            redirectURI: null,
+                        });
+                    }
+                    else {
+                        user_controller.updateLastLogin(user.id);
+                        res.json({
+                            success: true,
+                            error_message: null,
+                            redirectURI: "/dashboard",
+                        });
+                    }
+                });
+            }
+        })(req, res, next);
+        return [2 /*return*/];
+    });
+}); });
 exports.authRouter.post("/logout", function (req, res) {
     req.logOut();
     res.json({ redirectURI: "/" });
 });
 exports.authRouter.get("/user", function (req, res) {
-    res.json({ item: "nah" });
+    if (req.user) {
+        res.json({ id: req.user._id });
+    }
+    else {
+        res.json({ id: null });
+    }
 });
 exports.authRouter.get("/*", function (_req, res) {
     res.json({ message: "Invalid request" });

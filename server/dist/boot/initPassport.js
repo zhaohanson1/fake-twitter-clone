@@ -50,6 +50,7 @@ module.exports = function () {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 3, , 4]);
+                    console.log("awaiting finding user");
                     return [4 /*yield*/, user_1.findUser({ email: username })];
                 case 1:
                     user = _a.sent();
@@ -62,6 +63,7 @@ module.exports = function () {
                         })];
                 case 2:
                     validPassword = _a.sent();
+                    console.log("awaiting password validation");
                     if (!validPassword) {
                         return [2 /*return*/, done(null, false, { message: "Incorrect password." })];
                     }
@@ -105,8 +107,8 @@ module.exports = function () {
     passport.serializeUser(function (user, done) {
         done(null, { id: user._id });
     });
-    passport.deserializeUser(function (id, done) {
-        user_1.User.findById(id, function (err, user) {
+    passport.deserializeUser(function (user, done) {
+        user_1.User.findById(user.id, function (err, user) {
             done(err, user);
         });
     });

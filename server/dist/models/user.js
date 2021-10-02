@@ -94,24 +94,12 @@ function saltAndHash(password) {
         });
     });
 }
-function validate(user, errMessage) {
-    var err = user.validateSync();
-    if (err) {
-        if (errMessage) {
-            throw new Error(errMessage);
-        }
-        else {
-            throw err;
-        }
-    }
-}
-function createUser(args) {
+function validate(args) {
     return __awaiter(this, void 0, void 0, function () {
-        var emailUser, usernameUser, user, bcryptObj, err_1;
+        var emailUser, usernameUser;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, 5, , 6]);
                     if (args["email"] == undefined || args["email"] == "") {
                         throw new Error("Email is missing.");
                     }
@@ -136,25 +124,36 @@ function createUser(args) {
                     if (args["username"].length < 1 || args["username"].length > 256) {
                         throw new Error("Username is invalid length. Username should be at least 1 character long and less than or equal to 256 characters");
                     }
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+function createUser(args) {
+    return __awaiter(this, void 0, void 0, function () {
+        var user, bcryptObj, err_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 3, , 4]);
+                    validate(args);
                     user = new exports.User();
                     user.email = args["email"];
                     user.username = args["username"];
                     return [4 /*yield*/, saltAndHash(args["password"])];
-                case 3:
+                case 1:
                     bcryptObj = _a.sent();
                     user.passwordSalt = bcryptObj.salt;
                     user.passwordHash = bcryptObj.hash;
                     user.creationDate = new Date();
-                    //validate(user);
                     return [4 /*yield*/, user.save()];
-                case 4:
-                    //validate(user);
+                case 2:
                     _a.sent();
                     return [2 /*return*/, user];
-                case 5:
+                case 3:
                     err_1 = _a.sent();
                     throw err_1;
-                case 6: return [2 /*return*/];
+                case 4: return [2 /*return*/];
             }
         });
     });
@@ -198,6 +197,14 @@ function validateUser(args) {
     });
 }
 exports.validateUser = validateUser;
+/**
+ *
+ *
+ * @export
+ * @param {object} Filter: an object that contains attribute value pairs to find matching users
+ * @param {object | Array} Update: replace all matching user's attributes with corresponding value
+ * @returns {Query}
+ */
 function updateUser(userArgs, attributes) {
     return exports.User.updateOne(userArgs, attributes);
 }

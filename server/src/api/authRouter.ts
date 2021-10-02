@@ -1,11 +1,18 @@
 import { Router, Request, Response } from "express";
 
+declare module "express" {
+  interface Request {
+    user?: any;
+  }
+}
+
 // eslint-disable-next-line new-cap
 export const authRouter = Router({ mergeParams: true });
 
 var passport = require("passport");
 import { User } from "../models/user";
 var auth_controller = require("../controllers/auth_controller");
+var userController = require("../controllers/userController");
 
 authRouter.post("/signup", async (req: Request, res: Response) => {
   var args = {
@@ -17,10 +24,11 @@ authRouter.post("/signup", async (req: Request, res: Response) => {
   res.json(json_response);
 });
 
-authRouter.post("/login", (req: Request, res: Response, next: any) => {
+authRouter.post("/login", async (req: Request, res: Response, next: any) => {
   passport.authenticate(
     "email-local",
     (err: Error, user: typeof User, info: any) => {
+      console.log("a");
       if (err) {
         res.json({
           success: false,
@@ -44,7 +52,12 @@ authRouter.post("/login", (req: Request, res: Response, next: any) => {
               redirectURI: null,
             });
           } else {
-            res.json({ success: true, error_message: null, redirectURI: "/" });
+            userController.updateLastLogin(user.id);
+            res.json({
+              success: true,
+              error_message: null,
+              redirectURI: "/dashboard",
+            });
           }
         });
       }
@@ -57,8 +70,12 @@ authRouter.post("/logout", (req: Request, res: Response) => {
   res.json({ redirectURI: "/" });
 });
 
-authRouter.get("/user", (req, res) => {
-  res.json({ item: "nah" });
+authRouter.get("/user", (req: Request, res: Response) => {
+  if (req.user) {
+    res.json({ id: req.user._id });
+  } else {
+    res.json({ id: null });
+  }
 });
 
 authRouter.get("/*", (_req, res) => {

@@ -1,6 +1,6 @@
 import { Button, Grid, TextField, Typography } from "@mui/material";
 import React, { useState } from "react";
-import FormAlertBox from "./FormAlertBox";
+import FormAlertBox from "../FormAlertBox";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");

@@ -42,6 +42,7 @@ var bodyParser = require("body-parser");
 var passport = require("passport");
 var session = require("express-session");
 var MongoStore = require("connect-mongo");
+var morgan = require('morgan');
 var app = express();
 function init() {
     return __awaiter(this, void 0, void 0, function () {
@@ -51,6 +52,7 @@ function init() {
             require("dotenv").config();
             db = require("./boot/connectDatabase");
             clientPromise = db();
+            app.use(morgan('combined'));
             app.use(express.static("../../public"));
             oneDay = 1000 * 60 * 60 * 24;
             app.use(bodyParser.json());
