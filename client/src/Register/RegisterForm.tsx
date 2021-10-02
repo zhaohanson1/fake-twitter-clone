@@ -36,7 +36,7 @@ const RegisterForm = () => {
         if (data.success) {
           setSuccessOpen({
             successOpen: true,
-            successMsg: "Register success.",
+            successMsg: "Register success. Redirecting to login page...",
           });
         } else {
           setErrOpen({

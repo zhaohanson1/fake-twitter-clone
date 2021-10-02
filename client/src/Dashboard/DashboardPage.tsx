@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   ThemeProvider,
   Theme,
@@ -16,7 +16,7 @@ import DashboardNav from "./DashboardNav";
 import DashboardContent from "./DashboardContent";
 import DashboardWidget from "./DashboardWidget";
 import { Redirect } from "react-router";
-import useUser from "../useUser";
+import useUser from "../CustomHooks/useUser";
 
 const useStyles = makeStyles((_theme) => ({
   container: {
@@ -32,18 +32,18 @@ const useStyles = makeStyles((_theme) => ({
 }));
 
 export default function Dashboard() {
-  const classes = useStyles();
-  const user = useUser();
+  const [classes, _setClasses] = useState(useStyles());
+  
+  const [user, hasFetched] = useUser();
   return (
-    
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
-        {!user && <Redirect to="/login" />}
-        <DashboardHeader/>
+        {hasFetched && user === null && <Redirect to="/login" />}
+        <DashboardHeader />
         <Grid container direction="row" spacing={1}>
-          <DashboardNav classes={classes}/>
+          <DashboardNav classes={classes} />
           <DashboardContent classes={classes} />
-          <DashboardWidget classes={classes}/>
+          <DashboardWidget classes={classes} />
         </Grid>
       </ThemeProvider>
     </StyledEngineProvider>

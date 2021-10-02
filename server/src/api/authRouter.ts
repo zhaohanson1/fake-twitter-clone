@@ -11,7 +11,7 @@ export const authRouter = Router({ mergeParams: true });
 
 var passport = require("passport");
 import { User } from "../models/user";
-var auth_controller = require("../controllers/auth_controller");
+var authController = require("../controllers/authController");
 var userController = require("../controllers/userController");
 
 authRouter.post("/signup", async (req: Request, res: Response) => {
@@ -20,15 +20,24 @@ authRouter.post("/signup", async (req: Request, res: Response) => {
     username: req.body.username,
     password: req.body.password,
   };
-  var json_response = await auth_controller.signup(args);
-  res.json(json_response);
+  authController
+    .signup(args)
+    .then((pass: boolean) => {
+      if (pass) {
+        res.json({ success: false, alert: null, redirectURI: '/login' });
+      } else {
+        throw new Error("Something went wrong.");
+      }
+    })
+    .catch((err: any) => {
+      res.json({ success: false, alert: err.message, redirectURI: null });
+    });
 });
 
 authRouter.post("/login", async (req: Request, res: Response, next: any) => {
   passport.authenticate(
     "email-local",
     (err: Error, user: typeof User, info: any) => {
-      console.log("a");
       if (err) {
         res.json({
           success: false,

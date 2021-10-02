@@ -94,12 +94,13 @@ function saltAndHash(password) {
         });
     });
 }
-function validate(args) {
+function signupValidation(args) {
     return __awaiter(this, void 0, void 0, function () {
-        var emailUser, usernameUser;
+        var emailUser, usernameUser, err_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
+                    _a.trys.push([0, 3, , 4]);
                     if (args["email"] == undefined || args["email"] == "") {
                         throw new Error("Email is missing.");
                     }
@@ -124,36 +125,42 @@ function validate(args) {
                     if (args["username"].length < 1 || args["username"].length > 256) {
                         throw new Error("Username is invalid length. Username should be at least 1 character long and less than or equal to 256 characters");
                     }
-                    return [2 /*return*/];
+                    return [3 /*break*/, 4];
+                case 3:
+                    err_1 = _a.sent();
+                    throw err_1;
+                case 4: return [2 /*return*/];
             }
         });
     });
 }
 function createUser(args) {
     return __awaiter(this, void 0, void 0, function () {
-        var user, bcryptObj, err_1;
+        var user, bcryptObj, err_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    _a.trys.push([0, 3, , 4]);
-                    validate(args);
+                    _a.trys.push([0, 4, , 5]);
+                    return [4 /*yield*/, signupValidation(args)];
+                case 1:
+                    _a.sent();
                     user = new exports.User();
                     user.email = args["email"];
                     user.username = args["username"];
                     return [4 /*yield*/, saltAndHash(args["password"])];
-                case 1:
+                case 2:
                     bcryptObj = _a.sent();
                     user.passwordSalt = bcryptObj.salt;
                     user.passwordHash = bcryptObj.hash;
                     user.creationDate = new Date();
                     return [4 /*yield*/, user.save()];
-                case 2:
+                case 3:
                     _a.sent();
                     return [2 /*return*/, user];
-                case 3:
-                    err_1 = _a.sent();
-                    throw err_1;
-                case 4: return [2 /*return*/];
+                case 4:
+                    err_2 = _a.sent();
+                    throw err_2;
+                case 5: return [2 /*return*/];
             }
         });
     });

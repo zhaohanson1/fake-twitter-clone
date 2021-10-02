@@ -39,25 +39,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var user_1 = require("../models/user");
 module.exports = {
     signup: function (args) { return __awaiter(void 0, void 0, void 0, function () {
-        var err_1;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    _a.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, user_1.createUser({
-                            username: args["username"],
-                            password: args["password"],
-                            email: args["email"],
-                        })];
-                case 1:
-                    _a.sent();
-                    return [2 /*return*/, { success: true, alert: null }];
-                case 2:
-                    err_1 = _a.sent();
-                    console.log(err_1);
-                    return [2 /*return*/, { success: false, alert: err_1.message }];
-                case 3: return [2 /*return*/];
-            }
+            return [2 /*return*/, user_1.createUser({
+                    username: args["username"],
+                    password: args["password"],
+                    email: args["email"],
+                })
+                    .then(function (result) {
+                    return result;
+                })
+                    .catch(function (err) {
+                    throw err;
+                })];
         });
     }); },
 };

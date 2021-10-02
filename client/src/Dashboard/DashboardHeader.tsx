@@ -1,18 +1,16 @@
 import { Grid, Link } from "@mui/material";
 
-import useUser from "../useUser";
-export default function DashboardNav(props: any) {
-  const user = useUser();
+import useUser from "../CustomHooks/useUser";
+export default function DashboardHeader(props: any) {
+  const [user, hasFetched] = useUser();
 
   function handleLogout(e: React.MouseEvent) {
     const reqOpts = {
       method: "POST",
     };
-    console.log(user);
     fetch("api/auth/logout", reqOpts)
       .then((res) => res.json())
       .then((data) => {
-        console.log(user);
         if (data.redirectURI) {
           window.location.href = data.redirectURI;
         }
@@ -21,7 +19,7 @@ export default function DashboardNav(props: any) {
   return (
     <Grid item xs>
       <div>OkaygeBusiness {user}</div>
-      <Link href="" onClick={(e) => handleLogout(e)}>
+      <Link href="#" onClick={(e) => handleLogout(e)}>
         Logout
       </Link>
     </Grid>

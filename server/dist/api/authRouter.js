@@ -41,30 +41,35 @@ var express_1 = require("express");
 // eslint-disable-next-line new-cap
 exports.authRouter = express_1.Router({ mergeParams: true });
 var passport = require("passport");
-var auth_controller = require("../controllers/auth_controller");
-var user_controller = require("../controllers/user_controller");
+var authController = require("../controllers/authController");
+var userController = require("../controllers/userController");
 exports.authRouter.post("/signup", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var args, json_response;
+    var args;
     return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                args = {
-                    email: req.body.email,
-                    username: req.body.username,
-                    password: req.body.password,
-                };
-                return [4 /*yield*/, auth_controller.signup(args)];
-            case 1:
-                json_response = _a.sent();
-                res.json(json_response);
-                return [2 /*return*/];
-        }
+        args = {
+            email: req.body.email,
+            username: req.body.username,
+            password: req.body.password,
+        };
+        authController
+            .signup(args)
+            .then(function (pass) {
+            if (pass) {
+                res.json({ success: false, alert: null, redirectURI: '/login' });
+            }
+            else {
+                throw new Error("Something went wrong.");
+            }
+        })
+            .catch(function (err) {
+            res.json({ success: false, alert: err.message, redirectURI: null });
+        });
+        return [2 /*return*/];
     });
 }); });
 exports.authRouter.post("/login", function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         passport.authenticate("email-local", function (err, user, info) {
-            console.log("a");
             if (err) {
                 res.json({
                     success: false,
@@ -90,7 +95,7 @@ exports.authRouter.post("/login", function (req, res, next) { return __awaiter(v
                         });
                     }
                     else {
-                        user_controller.updateLastLogin(user.id);
+                        userController.updateLastLogin(user.id);
                         res.json({
                             success: true,
                             error_message: null,

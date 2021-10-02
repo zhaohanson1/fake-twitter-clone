@@ -4,7 +4,7 @@ import {
   Route,
   Redirect,
 } from "react-router-dom";
-import useUser from "./useUser";
+import useUser from "./CustomHooks/useUser";
 import {
   ThemeProvider,
   Theme,
@@ -31,17 +31,17 @@ declare module "@mui/styles/defaultTheme" {
 }
 
 const App = () => {
-  const user = useUser();
+  const [user, hasFetched] = useUser();
 
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
         <Router>
           <Switch>
-            <Route path="/dashboard" component={Dashboard} />
-            <Route path="/" component={Home} />
+            <Route exact path="/" component={Home} />
             <Route path="/login" component={Login} />
             <Route path="/register" component={Register} />
+            <Route path="/dashboard" component={Dashboard} />
           </Switch>
         </Router>
       </ThemeProvider>

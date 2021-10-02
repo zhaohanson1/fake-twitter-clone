@@ -65,39 +65,45 @@ async function saltAndHash(password: string) {
     });
 }
 
-async function validate(args: validationArgs) {
-  if (args["email"] == undefined || args["email"] == "") {
-    throw new Error("Email is missing.");
-  }
+async function signupValidation(args: validationArgs) {
+  try {
+    if (args["email"] == undefined || args["email"] == "") {
+      throw new Error("Email is missing.");
+    }
 
-  if (args["username"] == undefined || args["username"] == "") {
-    throw new Error("Username is missing.");
-  }
+    if (args["username"] == undefined || args["username"] == "") {
+      throw new Error("Username is missing.");
+    }
 
-  if (args["password"] == undefined || args["password"] == "") {
-    throw new Error("Password is missing.");
-  }
+    if (args["password"] == undefined || args["password"] == "") {
+      throw new Error("Password is missing.");
+    }
 
-  var emailUser = await findUser({ email: args["email"] });
+    var emailUser = await findUser({ email: args["email"] });
 
-  if (emailUser !== null) {
-    throw new Error("Email has already been used.");
-  }
-  var usernameUser = await findUser({ username: args["username"] });
-  if (usernameUser !== null) {
-    throw new Error("Username has already been used.");
-  }
+    if (emailUser !== null) {
+      throw new Error("Email has already been used.");
+    }
 
-  if (args["username"].length < 1 || args["username"].length > 256) {
-    throw new Error(
-      "Username is invalid length. Username should be at least 1 character long and less than or equal to 256 characters"
-    );
+    var usernameUser = await findUser({ username: args["username"] });
+
+    if (usernameUser !== null) {
+      throw new Error("Username has already been used.");
+    }
+
+    if (args["username"].length < 1 || args["username"].length > 256) {
+      throw new Error(
+        "Username is invalid length. Username should be at least 1 character long and less than or equal to 256 characters"
+      );
+    }
+  } catch (err: any) {
+    throw err;
   }
 }
 
 export async function createUser(args: validationArgs) {
   try {
-    validate(args);
+    await signupValidation(args);
     var user = new User();
     user.email = args["email"];
     user.username = args["username"];
