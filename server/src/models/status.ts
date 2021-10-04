@@ -40,8 +40,8 @@ export function readStatus(args: object) {
   return Status.find(args).exec();
 }
 
-export function updateStatus(filter: object, doc: object) {
-  return Status.update(filter, doc);
+export async function updateStatus(filter: object, doc: object, new_doc?: false) {
+  return await Status.findOneAndUpdate(filter, doc, {new: new_doc}).exec();
 }
 
 export function deleteStatus(args: object) {

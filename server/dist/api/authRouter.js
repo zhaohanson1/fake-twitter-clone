@@ -55,10 +55,10 @@ exports.authRouter.post("/signup", function (req, res) { return __awaiter(void 0
             .signup(args)
             .then(function (pass) {
             if (pass) {
-                res.json({ success: false, alert: null, redirectURI: '/login' });
+                res.json({ success: true, alert: null, redirectURI: "/login" });
             }
             else {
-                throw new Error("Something went wrong.");
+                throw new Error("Something went wrong: " + pass);
             }
         })
             .catch(function (err) {
@@ -112,6 +112,7 @@ exports.authRouter.post("/logout", function (req, res) {
     req.logOut();
     res.json({ redirectURI: "/" });
 });
+// get current user if exists
 exports.authRouter.get("/user", function (req, res) {
     if (req.user) {
         res.json({ id: req.user._id });
@@ -119,8 +120,5 @@ exports.authRouter.get("/user", function (req, res) {
     else {
         res.json({ id: null });
     }
-});
-exports.authRouter.get("/*", function (_req, res) {
-    res.json({ message: "Invalid request" });
 });
 module.exports = exports.authRouter;

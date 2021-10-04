@@ -8,6 +8,6 @@ module.exports = {
     email: string;
     password: string;
   }) => {
-    userController.createUser(args);
+    return userController.createUser(args);
   },
 };

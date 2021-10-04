@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import { updateUser } from "../models/user";
 import { statusRouter } from "./statusRouter";
 
+
 export const userRouter = Router({ mergeParams: true });
 var userController = require("../controllers/userController");
 
@@ -51,3 +52,5 @@ userRouter.delete("/:userId", (req: Request, res: Response) => {
 });
 
 userRouter.use("/:userId/status", statusRouter);
+
+module.exports = userRouter;

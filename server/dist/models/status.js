@@ -36,11 +36,68 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var userController = require("../controllers/userController");
-module.exports = {
-    signup: function (args) { return __awaiter(void 0, void 0, void 0, function () {
+exports.deleteStatus = exports.updateStatus = exports.readStatus = exports.createStatus = exports.Status = void 0;
+//Require Mongoose
+var mongoose = require("mongoose");
+var Schema = mongoose.Schema;
+var StatusSchema = new Schema({
+    _id: { type: Schema.Types.ObjectId, auto: true },
+    user: { type: Schema.Types.ObjectId, required: true },
+    comments: [Schema.Types.ObjectId],
+    likes: [Schema.Types.ObjectId],
+    creationDate: {
+        type: Date,
+        required: true,
+    },
+    content: {
+        type: String,
+        required: true,
+    },
+    parent: {
+        type: Schema.Types.ObjectId,
+        default: null,
+    },
+});
+exports.Status = mongoose.model("StatusModel", StatusSchema);
+exports.Status.init();
+function createStatus(args) {
+    var status = new exports.Status(args);
+    status.creationDate = new Date();
+    return status
+        .save()
+        .then(function () { return status; })
+        .catch(function (err) {
+        if (err)
+            throw err;
+    });
+}
+exports.createStatus = createStatus;
+function readStatus(args) {
+    return exports.Status.find(args).exec();
+}
+exports.readStatus = readStatus;
+function updateStatus(filter, doc, new_doc) {
+    return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            return [2 /*return*/, userController.createUser(args)];
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, exports.Status.findOneAndUpdate(filter, doc, { new: new_doc }).exec()];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
         });
-    }); },
+    });
+}
+exports.updateStatus = updateStatus;
+function deleteStatus(args) {
+    return exports.Status.deleteOne(args).catch(function (err) {
+        if (err)
+            throw err;
+    });
+}
+exports.deleteStatus = deleteStatus;
+module.exports = {
+    Status: exports.Status,
+    createStatus: createStatus,
+    readStatus: readStatus,
+    updateStatus: updateStatus,
+    deleteStatus: deleteStatus,
 };

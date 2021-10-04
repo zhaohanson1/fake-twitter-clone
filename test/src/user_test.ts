@@ -1,3 +1,5 @@
+export {};
+
 let mongoose = require("mongoose");
 
 let {
@@ -5,37 +7,45 @@ let {
   createUser,
   findUser,
   deleteUser,
-} = require("../server/dist/models/user");
+} = require("../../server/dist/models/user");
 
 let chai = require("chai");
-let { ready } = require("../server/dist/server");
+var assert = chai.assert;
+var expect = chai.expect;
 let should = chai.should();
 
-describe("Auth", () => {
+let { ready } = require("../../server/dist/server");
+
+describe("User", () => {
   beforeEach(async () => {
+    if (process.env.NODE_ENV != "test") {
+      console.error("WARNING: RUNNING TESTS ON NON-TEST ENVIRONMENT");
+      process.exit(1);
+    }
     await ready;
-    User.deleteMany({}, (err) => {
+
+    User.deleteMany({}, (err: any) => {
       if (err) console.log(err);
     });
   });
 
   describe("Creating a user.", () => {
-    function expectcreateUserToFail(args, done) {
+    function expectcreateUserToFail(args: any, done: any) {
       createUser(args)
-        .then((res) => {
-          done(new Error("Expected to fail: " + res));
+        .then((result: typeof User) => {
+          done(new Error("Expected to fail: " + result));
         })
-        .catch((err) => {
+        .catch((err: any) => {
           done();
         });
     }
 
-    function expectcreateUserToPass(args, done) {
+    function expectcreateUserToPass(args: any, done: any) {
       createUser(args)
-        .then((result) => {
+        .then((result: typeof User) => {
           done();
         })
-        .catch((err) => {
+        .catch((err: any) => {
           done(err);
         });
     }
@@ -49,26 +59,27 @@ describe("Auth", () => {
       it("should not allow duplicate emails", (done) => {
         var args = { username: "foo", password: "bar", email: "foo@bar.com" };
         createUser(args)
-          .then(async (res) => {
+          .then(async (result: typeof User) => {
             return createUser({
               username: "boo",
               password: "bar",
               email: "foo@bar.com",
             });
           })
-          .then((user) => {
+          .then((user: typeof User) => {
             if (user) done(new Error("Duplicate should not be allowed."));
           })
-          .catch((err) => {
+          .catch((err: any) => {
             done();
           });
       });
+
       describe("email format", () => {
         describe("valid formats", () => {
           it("test@domain.com", (done) => {
             var args = {
               email: "test@domain.com",
-              username: "foo",
+              username: "foo2",
               password: "bar",
             };
             expectcreateUserToPass(args, done);
@@ -223,29 +234,29 @@ describe("Auth", () => {
       it("should not allow duplicate usernames", (done) => {
         var args = { username: "foo", password: "bar", email: "foo@bar.com" };
         createUser(args)
-          .then(async (res) => {
+          .then(async (result: typeof User) => {
             return createUser({
               username: "foo",
               password: "bar",
               email: "baz@bat.com",
             });
           })
-          .then((user) => {
+          .then((user: typeof User) => {
             if (user) done(new Error("Duplicate should not be allowed."));
           })
-          .catch((err) => {
+          .catch((err: any) => {
             done();
           });
       });
       describe("username format", () => {
         it("should be at least 1 character(s) long", (done) => {
           createUser({ username: "", password: "bar", email: "foo@bar.com" })
-            .then((user) => {
+            .then((user: typeof User) => {
               if (user) {
                 done(new Error());
               }
             })
-            .catch((err) => {
+            .catch((err: any) => {
               done();
             });
         });
@@ -253,12 +264,12 @@ describe("Auth", () => {
         it("should have a maxLength of 256 characters", (done) => {
           var name = "a".repeat(257);
           createUser({ username: name, password: "bar", email: "foo@bar.com" })
-            .then((user) => {
+            .then((user: typeof User) => {
               if (user) {
                 done(new Error());
               }
             })
-            .catch((err) => {
+            .catch((err: any) => {
               done();
             });
         });
@@ -274,30 +285,30 @@ describe("Auth", () => {
   describe("Find a user.", () => {
     beforeEach((done) => {
       createUser({ username: "foo", password: "bar", email: "foo@bar.com" })
-        .then((res) => {
+        .then((result: typeof User) => {
           done();
         })
-        .catch((err) => {
+        .catch((err: any) => {
           done(err);
         });
     });
     describe("finding an existing user", () => {
       it("should be able to find with matching username", (done) => {
         findUser({ username: "foo" })
-          .then((res) => {
+          .then((result: typeof User) => {
             done();
           })
-          .catch((err) => {
+          .catch((err: any) => {
             done(err);
           });
       });
 
       it("should be able to find with matching email", (done) => {
         findUser({ email: "foo@bar.com" })
-          .then((res) => {
+          .then((result: typeof User) => {
             done();
           })
-          .catch((err) => {
+          .catch((err: any) => {
             done(err);
           });
       });
@@ -305,28 +316,28 @@ describe("Auth", () => {
 
     it("should not find a username that doesn't exist", (done) => {
       findUser({ username: "baz" })
-        .then((res) => {
-          if (res == undefined) {
+        .then((result: typeof User) => {
+          if (result == undefined) {
             done();
           } else {
-            throw new Error("Username should not exist: " + res);
+            throw new Error("Username should not exist: " + result);
           }
         })
-        .catch((err) => {
+        .catch((err: any) => {
           done(err);
         });
     });
 
     it("should not find an email that doesn't exist", (done) => {
       findUser({ username: "baz@bat.org" })
-        .then((res) => {
-          if (res == undefined) {
+        .then((result: typeof User) => {
+          if (result == undefined) {
             done();
           } else {
-            throw new Error("Email should not exist: " + res);
+            throw new Error("Email should not exist: " + result);
           }
         })
-        .catch((err) => {
+        .catch((err: any) => {
           done(err);
         });
     });
@@ -339,10 +350,10 @@ describe("Auth", () => {
   describe("Delete a user.", () => {
     beforeEach((done) => {
       createUser({ username: "foo", password: "bar", email: "foo@bar.com" })
-        .then((res) => {
+        .then((result: typeof User) => {
           done();
         })
-        .catch((err) => {
+        .catch((err: any) => {
           done(err);
         });
     });
@@ -350,10 +361,10 @@ describe("Auth", () => {
     it("should not delete a user that doesn't exist", (done) => {
       // Mongoose doesn't do anything special so it should be fine? Maybe warn if user doesn't exists?
       deleteUser({ username: "baz" })
-        .then((res) => {
+        .then((result: typeof User) => {
           done();
         })
-        .catch((err) => {
+        .catch((err: any) => {
           done(err);
         });
     });
@@ -361,28 +372,28 @@ describe("Auth", () => {
     describe("delete an existing user", () => {
       it("should be able to delete by username", (done) => {
         deleteUser({ username: "foo" })
-          .then((res) => {
+          .then((result: typeof User) => {
             return findUser({ username: "foo" });
           })
-          .then((user) => {
+          .then((user: typeof User) => {
             if (!user) done();
             else done(new Error("User should have been deleted"));
           })
-          .catch((err) => {
+          .catch((err: any) => {
             done(err);
           });
       });
 
       it("should be able to delete by email", (done) => {
         deleteUser({ email: "foo@bar.com" })
-          .then((res) => {
+          .then((result: typeof User) => {
             return findUser({ email: "foo@bar.com" });
           })
-          .then((user) => {
+          .then((user: typeof User) => {
             if (!user) done();
             else done(new Error("User should have been deleted"));
           })
-          .catch((err) => {
+          .catch((err: any) => {
             done(err);
           });
       });
@@ -390,7 +401,7 @@ describe("Auth", () => {
   });
 
   afterEach(async () => {
-    User.deleteMany({}, (err) => {
+    User.deleteMany({}, (err: any) => {
       if (err) console.log(err);
     });
   });

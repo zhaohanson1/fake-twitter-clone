@@ -26,7 +26,7 @@ authRouter.post("/signup", async (req: Request, res: Response) => {
       if (pass) {
         res.json({ success: true, alert: null, redirectURI: "/login" });
       } else {
-        throw new Error("Something went wrong.");
+        throw new Error("Something went wrong: " + pass);
       }
     })
     .catch((err: any) => {

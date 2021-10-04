@@ -55,6 +55,7 @@ var UserSchema = new Schema({
         required: [true, "Email is required."],
         match: [regEmail, "Invalid email format."],
     },
+    posts: [mongoose.Schema.Types.ObjectId],
     phone: { type: String },
     creationDate: { type: Date },
     lastLogin: { type: Date },

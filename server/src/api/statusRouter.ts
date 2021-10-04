@@ -120,3 +120,5 @@ statusRouter.post("/:postId/unlike", (req: Request, res: Response) => {
     }
   );
 });
+
+module.exports = { statusRouter: statusRouter };
