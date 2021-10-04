@@ -24,7 +24,7 @@ authRouter.post("/signup", async (req: Request, res: Response) => {
     .signup(args)
     .then((pass: boolean) => {
       if (pass) {
-        res.json({ success: false, alert: null, redirectURI: '/login' });
+        res.json({ success: true, alert: null, redirectURI: "/login" });
       } else {
         throw new Error("Something went wrong.");
       }
@@ -79,16 +79,13 @@ authRouter.post("/logout", (req: Request, res: Response) => {
   res.json({ redirectURI: "/" });
 });
 
+// get current user if exists
 authRouter.get("/user", (req: Request, res: Response) => {
   if (req.user) {
     res.json({ id: req.user._id });
   } else {
     res.json({ id: null });
   }
-});
-
-authRouter.get("/*", (_req, res) => {
-  res.json({ message: "Invalid request" });
 });
 
 module.exports = authRouter;
