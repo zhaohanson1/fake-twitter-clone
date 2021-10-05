@@ -55,7 +55,7 @@ var UserSchema = new Schema({
         required: [true, "Email is required."],
         match: [regEmail, "Invalid email format."],
     },
-    posts: [mongoose.Schema.Types.ObjectId],
+    statuses: [Schema.Types.ObjectId],
     phone: { type: String },
     creationDate: { type: Date },
     lastLogin: { type: Date },
@@ -115,7 +115,7 @@ function signupValidation(args) {
                 case 1:
                     emailUser = _a.sent();
                     if (emailUser !== null) {
-                        throw new Error("Email has already been used.");
+                        throw new Error("Email has already been used." + JSON.stringify(args));
                     }
                     return [4 /*yield*/, findUser({ username: args["username"] })];
                 case 2:

@@ -63,10 +63,10 @@ module.exports = {
     deleteUser: function (userId) {
         user_1.deleteUser({ _id: userId });
     },
-    addPostToUser: function (userId, postId, callback) {
+    addStatusToUser: function (userId, postId, callback) {
         user_1.User.findByIdAndUpdate(userId, { $addToSet: { posts: { _id: postId } } }, callback);
     },
-    removePostFromUser: function (userId, postId, callback) {
+    removeStatusFromUser: function (userId, postId, callback) {
         user_1.User.findByIdAndUpdate(userId, { $pull: { posts: { _id: postId } } }, callback);
     },
 };

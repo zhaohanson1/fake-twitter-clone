@@ -13,7 +13,7 @@ var userController = require("../controllers/userController");
  */
 statusRouter.get("/", (req: Request, res: Response) => {
   var userId = req.params.userId;
-  var posts = statusController.getAllPostsFromUser(userId);
+  var posts = statusController.getAllStatuses(userId);
 });
 
 /**
@@ -26,55 +26,52 @@ statusRouter.post("/", (req: Request, res: Response) => {
   if ("parentId" in req.body) {
     var parentId = req.body.parentId;
     var post = statusController.addComment(userId, parentId, content);
-    userController.addPostToUser(userId, post.id);
+    userController.addStatusToUser(userId, post.id);
   } else {
-    var post = statusController.addPost(userId, content);
-    userController.addPostToUser(userId, post.id);
+    var post = statusController.addStatus(userId, content);
+    userController.addStatusToUser(userId, post.id);
   }
 });
 
 // Get a post by postId
 statusRouter.get("/:postId", (req: Request, res: Response) => {
   var postId = req.params.postId;
-  statusController.getPost(postId, (err: any, status: typeof Status) => {
-    if (err) {
-      res.json({ success: false, content: null });
-    }
-    if (!status) {
-      res.json({ success: false, content: null });
-    } else {
-      res.json({ sucess: true, content: status.content });
-    }
-  });
+
+  statusController
+    .getStatus(postId)
+    .then((status: typeof Status) => {
+      if (!status) {
+        res.json({ success: false, content: null });
+      } else {
+        res.json({ sucess: true, content: status.content });
+      }
+    })
+    .catch((err: any) => {
+      if (err) {
+        res.json({ success: false, content: null });
+      }
+    });
 });
 
 // edit a post
 statusRouter.put("/:postId", (req: Request, res: Response) => {
   var postId = req.params.postId;
   var content = req.body.content;
-  statusController.editPost(postId, content);
+  statusController.editStatus(postId, content);
 });
 
 // delete a post
 statusRouter.delete("/:postId", (req: Request, res: Response) => {
   var userId = req.params.userId;
   var postId = req.params.postId;
-  statusController.removeComment(postId, (err: any, status: typeof Status) => {
-    if (err) {
-      res.json({ success: false });
-    }
-    if (!status) {
-      res.json({ success: false });
-    } else {
-      userController.removePostFromUser(
-        userId,
-        postId,
-        (_err: any, _user: typeof User) => {
-          res.json({ sucess: true });
-        }
-      );
-    }
-  });
+  var status = statusController.getStatus(postId);
+  if (status.parent === null) {
+    statusController.removeStatus(postId);
+    userController.removeStatusFromUser(postId);
+  } else {
+    statusController.removeComment(postId);
+    userController.removeStatusFromUser(postId);
+  }
 });
 
 // Add a like to a post

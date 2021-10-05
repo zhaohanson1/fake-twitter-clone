@@ -65,7 +65,7 @@ function createStatus(args) {
     status.creationDate = new Date();
     return status
         .save()
-        .then(function () { return status; })
+        .then(function (status) { return status; })
         .catch(function (err) {
         if (err)
             throw err;

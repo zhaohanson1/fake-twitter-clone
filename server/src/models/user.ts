@@ -19,7 +19,7 @@ var UserSchema = new Schema({
     required: [true, "Email is required."],
     match: [regEmail, "Invalid email format."],
   },
-  posts: [mongoose.Schema.Types.ObjectId],
+  statuses: [Schema.Types.ObjectId],
   phone: { type: String },
   creationDate: { type: Date },
   lastLogin: { type: Date },
@@ -81,7 +81,7 @@ async function signupValidation(args: validationArgs) {
     var emailUser = await findUser({ email: args["email"] });
 
     if (emailUser !== null) {
-      throw new Error("Email has already been used.");
+      throw new Error("Email has already been used." + JSON.stringify(args));
     }
 
     var usernameUser = await findUser({ username: args["username"] });

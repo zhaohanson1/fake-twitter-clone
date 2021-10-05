@@ -30,7 +30,7 @@ export function createStatus(args: object) {
   status.creationDate = new Date();
   return status
     .save()
-    .then(() => status)
+    .then((status: typeof Status) => status)
     .catch((err: any) => {
       if (err) throw err;
     });
@@ -40,8 +40,12 @@ export function readStatus(args: object) {
   return Status.find(args).exec();
 }
 
-export async function updateStatus(filter: object, doc: object, new_doc?: false) {
-  return await Status.findOneAndUpdate(filter, doc, {new: new_doc}).exec();
+export async function updateStatus(
+  filter: object,
+  doc: object,
+  new_doc?: boolean
+) {
+  return await Status.findOneAndUpdate(filter, doc, { new: new_doc }).exec();
 }
 
 export function deleteStatus(args: object) {

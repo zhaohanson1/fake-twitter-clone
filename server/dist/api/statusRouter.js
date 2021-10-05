@@ -11,7 +11,7 @@ var userController = require("../controllers/userController");
  */
 exports.statusRouter.get("/", function (req, res) {
     var userId = req.params.userId;
-    var posts = statusController.getAllPostsFromUser(userId);
+    var posts = statusController.getAllStatuses(userId);
 });
 /**
  * /api/:userId/
@@ -23,25 +23,29 @@ exports.statusRouter.post("/", function (req, res) {
     if ("parentId" in req.body) {
         var parentId = req.body.parentId;
         var post = statusController.addComment(userId, parentId, content);
-        userController.addPostToUser(userId, post.id);
+        userController.addStatusToUser(userId, post.id);
     }
     else {
-        var post = statusController.addPost(userId, content);
-        userController.addPostToUser(userId, post.id);
+        var post = statusController.addStatus(userId, content);
+        userController.addStatusToUser(userId, post.id);
     }
 });
 // Get a post by postId
 exports.statusRouter.get("/:postId", function (req, res) {
     var postId = req.params.postId;
-    statusController.getPost(postId, function (err, status) {
-        if (err) {
-            res.json({ success: false, content: null });
-        }
+    statusController
+        .getStatus(postId)
+        .then(function (status) {
         if (!status) {
             res.json({ success: false, content: null });
         }
         else {
             res.json({ sucess: true, content: status.content });
+        }
+    })
+        .catch(function (err) {
+        if (err) {
+            res.json({ success: false, content: null });
         }
     });
 });
@@ -49,25 +53,21 @@ exports.statusRouter.get("/:postId", function (req, res) {
 exports.statusRouter.put("/:postId", function (req, res) {
     var postId = req.params.postId;
     var content = req.body.content;
-    statusController.editPost(postId, content);
+    statusController.editStatus(postId, content);
 });
 // delete a post
 exports.statusRouter.delete("/:postId", function (req, res) {
     var userId = req.params.userId;
     var postId = req.params.postId;
-    statusController.removeComment(postId, function (err, status) {
-        if (err) {
-            res.json({ success: false });
-        }
-        if (!status) {
-            res.json({ success: false });
-        }
-        else {
-            userController.removePostFromUser(userId, postId, function (_err, _user) {
-                res.json({ sucess: true });
-            });
-        }
-    });
+    var status = statusController.getStatus(postId);
+    if (status.parent === null) {
+        statusController.removeStatus(postId);
+        userController.removeStatusFromUser(postId);
+    }
+    else {
+        statusController.removeComment(postId);
+        userController.removeStatusFromUser(postId);
+    }
 });
 // Add a like to a post
 exports.statusRouter.post("/:postId/like", function (req, res) {

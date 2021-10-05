@@ -8,7 +8,7 @@
     "noImplicitAny": true,
     "moduleResolution": "node",
     "strict": true,                                 /* Enable all strict type-checking options. */
-    "allowJs": true,
+    "allowJs": false,
     "skipLibCheck": true,                           /* Skip type checking of declaration files. */
     "forceConsistentCasingInFileNames": true,        /* Disallow inconsistently-cased references to the same file. */
     "outDir": "./dist",

@@ -32,7 +32,7 @@ module.exports = {
       deleteUser({_id: userId});
   },
 
-  addPostToUser: (userId: string, postId: string, callback: any) => {
+  addStatusToUser: (userId: string, postId: string, callback: any) => {
     User.findByIdAndUpdate(
       userId,
       { $addToSet: { posts: { _id: postId } } },
@@ -40,7 +40,7 @@ module.exports = {
     );
   },
 
-  removePostFromUser: (userId: string, postId: string, callback: any) => {
+  removeStatusFromUser: (userId: string, postId: string, callback: any) => {
     User.findByIdAndUpdate(
       userId,
       { $pull: { posts: { _id: postId } } },

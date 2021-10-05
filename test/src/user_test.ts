@@ -8,13 +8,12 @@ let {
   findUser,
   deleteUser,
 } = require("../../server/dist/models/user");
+let { ready } = require("../../server/dist/server");
 
 let chai = require("chai");
 var assert = chai.assert;
 var expect = chai.expect;
 let should = chai.should();
-
-let { ready } = require("../../server/dist/server");
 
 describe("User", () => {
   beforeEach(async () => {
