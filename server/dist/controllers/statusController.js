@@ -36,17 +36,48 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.updateStatus = exports.readStatus = exports.createStatus = void 0;
 var status_1 = require("../models/status");
 var ObjectId = require("mongoose").Types.ObjectId;
 var userController = require("../controllers/userController");
+function createStatus(args) {
+    var status = new status_1.Status(args);
+    status.creationDate = new Date();
+    return status
+        .save()
+        .then(function (status) { return status; })
+        .catch(function (err) {
+        if (err)
+            throw err;
+    });
+}
+exports.createStatus = createStatus;
+function readStatus(args) {
+    return status_1.Status.find(args).exec();
+}
+exports.readStatus = readStatus;
+function updateStatus(filter, doc, new_doc) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, status_1.Status.findOneAndUpdate(filter, doc, { new: new_doc }).exec()];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    });
+}
+exports.updateStatus = updateStatus;
 module.exports = {
+    createStatus: createStatus,
+    readStatus: readStatus,
+    updateStatus: updateStatus,
     /**
      *
      * @param userId
      * @returns
      */
     getAllStatuses: function (userId) {
-        var statuses = status_1.readStatus({
+        var statuses = readStatus({
             user: userId,
         });
         return statuses;
@@ -58,7 +89,7 @@ module.exports = {
      * @returns Boolean: true if sucess
      */
     addStatus: function (userId, content) {
-        return status_1.createStatus({
+        return createStatus({
             user: userId,
             content: content,
         })
@@ -96,7 +127,7 @@ module.exports = {
     editStatus: function (statusId, content) { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, status_1.updateStatus({ _id: statusId }, { content: content }, true)];
+                case 0: return [4 /*yield*/, updateStatus({ _id: statusId }, { content: content }, true)];
                 case 1: return [2 /*return*/, _a.sent()];
             }
         });
@@ -129,7 +160,7 @@ module.exports = {
      * @returns
      */
     getComments: function (statusId) {
-        var comments = status_1.readStatus({ _id: statusId }).comments;
+        var comments = readStatus({ _id: statusId }).comments;
         return comments;
     },
     /**
@@ -140,7 +171,7 @@ module.exports = {
      * @returns
      */
     addComment: function (userId, parentId, content) {
-        return status_1.createStatus({
+        return createStatus({
             user: userId,
             parentId: parentId,
             content: content,
@@ -213,4 +244,11 @@ module.exports = {
             }
         });
     }); },
+    /* DELETE */
+    deleteStatus: function (args) {
+        return status_1.Status.deleteOne(args).catch(function (err) {
+            if (err)
+                throw err;
+        });
+    },
 };

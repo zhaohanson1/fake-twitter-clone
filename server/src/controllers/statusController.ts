@@ -1,14 +1,38 @@
-import {
-  createStatus,
-  readStatus,
-  Status,
-  updateStatus,
-} from "../models/status";
+import { Status } from "../models/status";
 var ObjectId = require("mongoose").Types.ObjectId;
 
 var userController = require("../controllers/userController");
 
+export function createStatus(args: object) {
+  var status = new Status(args);
+  status.creationDate = new Date();
+  return status
+    .save()
+    .then((status: typeof Status) => status)
+    .catch((err: any) => {
+      if (err) throw err;
+    });
+}
+
+export function readStatus(args: object) {
+  return Status.find(args).exec();
+}
+
+export async function updateStatus(
+  filter: object,
+  doc: object,
+  new_doc?: boolean
+) {
+  return await Status.findOneAndUpdate(filter, doc, { new: new_doc }).exec();
+}
+
+
+
 module.exports = {
+  createStatus: createStatus,
+  readStatus: readStatus,
+  updateStatus: updateStatus,
+  
   /**
    *
    * @param userId
@@ -160,5 +184,12 @@ module.exports = {
       .catch((err: any) => {
         throw err;
       });
+  },
+
+  /* DELETE */
+  deleteStatus: (args: object) => {
+    return Status.deleteOne(args).catch((err: any) => {
+      if (err) throw err;
+    });
   },
 };

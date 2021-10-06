@@ -7,15 +7,10 @@ var ObjectId = require("mongoose").Types.ObjectId;
 
 let { ready } = require("../../server/dist/server");
 
-let {
-  Status,
-  createStatus,
-  readStatus,
-  updateStatus,
-  deleteStatus,
-} = require("../../server/dist/models/status");
+let { Status } = require("../../server/dist/models/status");
 const { User } = require("../../server/dist/models/user");
 var userController = require("../../server/dist/controllers/userController");
+var statusController = require("../../server/dist/controllers/statusController");
 
 let should = chai.should();
 
@@ -56,7 +51,8 @@ describe("Status", () => {
         describe("post", () => {
           it("should require a user.", (done) => {
             var content = "Hello World";
-            createStatus({ content: content })
+            statusController
+              .createStatus({ content: content })
               .then((status: typeof Status) => {
                 if (status) {
                   throw new Error("No status should be found" + status);
@@ -74,7 +70,8 @@ describe("Status", () => {
 
           it("should require content.", (done) => {
             var userId = ObjectId(user.id);
-            createStatus({ user: userId })
+            statusController
+              .createStatus({ user: userId })
               .then((status: typeof Status) => {
                 if (status) {
                   throw new Error("No status should be found" + status);
@@ -93,7 +90,8 @@ describe("Status", () => {
           it("should have a user and content", (done) => {
             var userId = ObjectId(user.id);
             var content = "Hello World";
-            createStatus({ user: userId, content: content })
+            statusController
+              .createStatus({ user: userId, content: content })
               .then((status: typeof Status) => {
                 expect(status.user).to.be.equal(userId);
                 expect(status.content).to.be.equal(content);
@@ -110,7 +108,8 @@ describe("Status", () => {
             var userId = ObjectId(user.id);
             var content = "Hello World";
             var parent = userId;
-            createStatus({ user: userId, content: content, parent: parent })
+            statusController
+              .createStatus({ user: userId, content: content, parent: parent })
               .then((status: typeof Status) => {
                 expect(status.user).to.be.equal(userId);
                 expect(status.content).to.be.equal(content);
@@ -132,11 +131,12 @@ describe("Status", () => {
       beforeEach(() => {
         userId = ObjectId(user.id);
         content = "Hello World";
-        createStatus({ user: userId, content: content });
+        statusController.createStatus({ user: userId, content: content });
       });
 
       it("should find any post by user", (done) => {
-        readStatus({ user: userId })
+        statusController
+          .readStatus({ user: userId })
           .then((status: typeof Status) => {
             if (status) {
               done();
@@ -150,7 +150,8 @@ describe("Status", () => {
       });
 
       it("should find any post by content", (done) => {
-        readStatus({ content: content })
+        statusController
+          .readStatus({ content: content })
           .then((status: typeof Status) => {
             if (status) {
               done();
@@ -171,11 +172,15 @@ describe("Status", () => {
       beforeEach(async () => {
         userId = ObjectId(user.id);
         content = "Hello World";
-        post = await createStatus({ user: userId, content: content });
+        post = await statusController.createStatus({
+          user: userId,
+          content: content,
+        });
       });
 
       it("should change the content", (done) => {
-        updateStatus({ id: post.id }, { content: "Hello Planet" }, true)
+        statusController
+          .updateStatus({ id: post.id }, { content: "Hello Planet" }, true)
           .then((status: typeof Status) => {
             if (status) {
               expect(status.content).to.not.be.equal(content);
@@ -196,14 +201,18 @@ describe("Status", () => {
       beforeEach(async () => {
         var userId = ObjectId(user.id);
         var content = "Hello World";
-        post = await createStatus({ user: userId, content: content });
+        post = await statusController.createStatus({
+          user: userId,
+          content: content,
+        });
       });
 
       it("should not find a deleted status", (done) => {
         var postId = ObjectId(post.id);
-        deleteStatus({ id: postId })
+        statusController
+          .deleteStatus({ id: postId })
           .then((_status: typeof Status) => {})
-          .then(readStatus({ id: postId }))
+          .then(statusController.readStatus({ id: postId }))
           .then((status: typeof Status) => {
             if (status) {
               throw new Error("Status has been found");
