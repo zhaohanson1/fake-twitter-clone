@@ -24,6 +24,12 @@ describe("Auth", () => {
     });
   });
 
+  afterEach(async () => {
+    User.deleteMany({}, (err: any) => {
+      if (err) console.log(err);
+    });
+  });
+
   describe("Signup a user.", () => {
     it("should create a user in the database.", async () => {
       var user = await User.findOne({ username: "admin" }).exec();

@@ -7,9 +7,9 @@ var expect = chai.expect;
 let { ready } = require("../../server/dist/server");
 
 var { Status } = require("../../server/dist/models/status");
-var { createUser, User } = require("../../server/dist/models/user");
+var { User } = require("../../server/dist/models/user");
 var statusController = require("../../server/dist/controllers/statusController");
-
+var userController = require("../../server/dist/controllers/userController");
 let should = chai.should();
 
 describe("Status controller", () => {
@@ -40,8 +40,8 @@ describe("Status controller", () => {
   describe("Posts", () => {
     var user: typeof User;
     before(async () => {
-      var args = { username: "foo", password: "bar", email: "foo@bar.com" };
-      user = await createUser(args);
+      var args = { username: "pfoo", password: "bar", email: "pfoo@bar.com" };
+      user = await userController.createUser(args);
     });
 
     describe("addStatus", () => {
@@ -100,12 +100,12 @@ describe("Status controller", () => {
     var user2: typeof User;
     var status: typeof Status;
     beforeEach(async () => {
-      user1 = await createUser({
+      user1 = await userController.createUser({
         username: "cfoo",
         password: "bar",
         email: "cfoo@bar.com",
       });
-      user2 = await createUser({
+      user2 = await userController.createUser({
         username: "cfoo2",
         password: "bar",
         email: "cfoo2@bar.com",
@@ -159,12 +159,12 @@ describe("Status controller", () => {
     var status: typeof Status;
 
     beforeEach(async () => {
-      user1 = await createUser({
+      user1 = await userController.createUser({
         username: "foo",
         password: "bar",
         email: "foo@bar.com",
       });
-      user2 = await createUser({
+      user2 = await userController.createUser({
         username: "foo2",
         password: "bar",
         email: "foo2@bar.com",

@@ -1,7 +1,6 @@
 import { Router, Request, Response } from "express";
-import { updateUser } from "../models/user";
-import { statusRouter } from "./statusRouter";
 
+import { statusRouter } from "./statusRouter";
 
 export const userRouter = Router({ mergeParams: true });
 var userController = require("../controllers/userController");
@@ -34,7 +33,7 @@ userRouter.post("/", (req: Request, res: Response) => {
 // Get a user
 userRouter.get("/:userId", (req: Request, res: Response) => {
   var userId = req.params.userId;
-  var user = userController.getUser(userId);
+  var user = userController.getUserById(userId);
   res.json(user);
 });
 
@@ -42,13 +41,13 @@ userRouter.get("/:userId", (req: Request, res: Response) => {
 userRouter.post("/:userId", (req: Request, res: Response) => {
   var userId = req.params.userId;
   var attributes = req.body;
-  updateUser({ _id: userId }, attributes);
+  userController.updateUser({ _id: userId }, attributes);
 });
 
 // Delete a user
 userRouter.delete("/:userId", (req: Request, res: Response) => {
   var userId = req.params.userId;
-  userController.deleteUser(userId);
+  userController.deleteUserById(userId);
 });
 
 userRouter.use("/:userId/status", statusRouter);

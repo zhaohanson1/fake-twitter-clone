@@ -2,13 +2,9 @@ export {};
 
 let mongoose = require("mongoose");
 
-let {
-  User,
-  createUser,
-  findUser,
-  deleteUser,
-} = require("../../server/dist/models/user");
+let { User } = require("../../server/dist/models/user");
 let { ready } = require("../../server/dist/server");
+var userController = require("../../server/dist/controllers/userController");
 
 let chai = require("chai");
 var assert = chai.assert;
@@ -30,7 +26,8 @@ describe("User", () => {
 
   describe("Creating a user.", () => {
     function expectcreateUserToFail(args: any, done: any) {
-      createUser(args)
+      userController
+        .createUser(args)
         .then((result: typeof User) => {
           done(new Error("Expected to fail: " + result));
         })
@@ -40,7 +37,8 @@ describe("User", () => {
     }
 
     function expectcreateUserToPass(args: any, done: any) {
-      createUser(args)
+      userController
+        .createUser(args)
         .then((result: typeof User) => {
           done();
         })
@@ -57,9 +55,10 @@ describe("User", () => {
 
       it("should not allow duplicate emails", (done) => {
         var args = { username: "foo", password: "bar", email: "foo@bar.com" };
-        createUser(args)
+        userController
+          .createUser(args)
           .then(async (result: typeof User) => {
-            return createUser({
+            return userController.createUser({
               username: "boo",
               password: "bar",
               email: "foo@bar.com",
@@ -232,9 +231,10 @@ describe("User", () => {
       });
       it("should not allow duplicate usernames", (done) => {
         var args = { username: "foo", password: "bar", email: "foo@bar.com" };
-        createUser(args)
+        userController
+          .createUser(args)
           .then(async (result: typeof User) => {
-            return createUser({
+            return userController.createUser({
               username: "foo",
               password: "bar",
               email: "baz@bat.com",
@@ -249,7 +249,8 @@ describe("User", () => {
       });
       describe("username format", () => {
         it("should be at least 1 character(s) long", (done) => {
-          createUser({ username: "", password: "bar", email: "foo@bar.com" })
+          userController
+            .createUser({ username: "", password: "bar", email: "foo@bar.com" })
             .then((user: typeof User) => {
               if (user) {
                 done(new Error());
@@ -262,7 +263,12 @@ describe("User", () => {
 
         it("should have a maxLength of 256 characters", (done) => {
           var name = "a".repeat(257);
-          createUser({ username: name, password: "bar", email: "foo@bar.com" })
+          userController
+            .createUser({
+              username: name,
+              password: "bar",
+              email: "foo@bar.com",
+            })
             .then((user: typeof User) => {
               if (user) {
                 done(new Error());
@@ -283,7 +289,19 @@ describe("User", () => {
 
   describe("Find a user.", () => {
     beforeEach((done) => {
-      createUser({ username: "foo", password: "bar", email: "foo@bar.com" })
+      userController
+        .createUser({ username: "foo", password: "bar", email: "foo@bar.com" })
+        .then((result: typeof User) => {
+          done();
+        })
+        .catch((err: any) => {
+          done(err);
+        });
+    });
+
+    afterEach((done) => {
+      userController
+        .deleteUser({ username: "foo", email: "foo@bar.com" })
         .then((result: typeof User) => {
           done();
         })
@@ -293,7 +311,8 @@ describe("User", () => {
     });
     describe("finding an existing user", () => {
       it("should be able to find with matching username", (done) => {
-        findUser({ username: "foo" })
+        userController
+          .getUser({ username: "foo" })
           .then((result: typeof User) => {
             done();
           })
@@ -303,7 +322,8 @@ describe("User", () => {
       });
 
       it("should be able to find with matching email", (done) => {
-        findUser({ email: "foo@bar.com" })
+        userController
+          .getUser({ email: "foo@bar.com" })
           .then((result: typeof User) => {
             done();
           })
@@ -314,7 +334,8 @@ describe("User", () => {
     });
 
     it("should not find a username that doesn't exist", (done) => {
-      findUser({ username: "baz" })
+      userController
+        .getUser({ username: "baz" })
         .then((result: typeof User) => {
           if (result == undefined) {
             done();
@@ -328,7 +349,8 @@ describe("User", () => {
     });
 
     it("should not find an email that doesn't exist", (done) => {
-      findUser({ username: "baz@bat.org" })
+      userController
+        .getUser({ username: "baz@bat.org" })
         .then((result: typeof User) => {
           if (result == undefined) {
             done();
@@ -348,7 +370,8 @@ describe("User", () => {
 
   describe("Delete a user.", () => {
     beforeEach((done) => {
-      createUser({ username: "foo", password: "bar", email: "foo@bar.com" })
+      userController
+        .createUser({ username: "foo", password: "bar", email: "foo@bar.com" })
         .then((result: typeof User) => {
           done();
         })
@@ -359,7 +382,8 @@ describe("User", () => {
 
     it("should not delete a user that doesn't exist", (done) => {
       // Mongoose doesn't do anything special so it should be fine? Maybe warn if user doesn't exists?
-      deleteUser({ username: "baz" })
+      userController
+        .deleteUser({ username: "baz" })
         .then((result: typeof User) => {
           done();
         })
@@ -370,9 +394,10 @@ describe("User", () => {
 
     describe("delete an existing user", () => {
       it("should be able to delete by username", (done) => {
-        deleteUser({ username: "foo" })
+        userController
+          .deleteUser({ username: "foo" })
           .then((result: typeof User) => {
-            return findUser({ username: "foo" });
+            return userController.getUser({ username: "foo" });
           })
           .then((user: typeof User) => {
             if (!user) done();
@@ -384,9 +409,10 @@ describe("User", () => {
       });
 
       it("should be able to delete by email", (done) => {
-        deleteUser({ email: "foo@bar.com" })
+        userController
+          .deleteUser({ email: "foo@bar.com" })
           .then((result: typeof User) => {
-            return findUser({ email: "foo@bar.com" });
+            return userController.getUser({ email: "foo@bar.com" });
           })
           .then((user: typeof User) => {
             if (!user) done();

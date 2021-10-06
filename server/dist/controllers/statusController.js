@@ -111,6 +111,11 @@ module.exports = {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, status_1.Status.findByIdAndDelete(statusId)
                         .exec()
+                        .then(function (status) {
+                        var user = status.user;
+                        userController.removeStatusFromUser(user.id, status.id);
+                        return status;
+                    })
                         .catch(function (err) {
                         throw err;
                     })];

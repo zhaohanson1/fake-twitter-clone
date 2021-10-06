@@ -14,7 +14,8 @@ let {
   updateStatus,
   deleteStatus,
 } = require("../../server/dist/models/status");
-const { User, createUser } = require("../../server/dist/models/user");
+const { User } = require("../../server/dist/models/user");
+var userController = require("../../server/dist/controllers/userController");
 
 let should = chai.should();
 
@@ -34,11 +35,20 @@ describe("Status", () => {
     });
   });
 
+  afterEach(async () => {
+    Status.deleteMany({}, (err: any) => {
+      if (err) console.log(err);
+    });
+    User.deleteMany({}, (err: any) => {
+      if (err) console.log(err);
+    });
+  });
+
   describe("CRUD", () => {
     var user: typeof User;
     beforeEach(() => {
       var args = { username: "foo", password: "bar", email: "foo@bar.com" };
-      user = createUser(args);
+      user = userController.createUser(args);
     });
 
     describe("Create", () => {

@@ -36,11 +36,64 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var userController = require("../controllers/userController");
+exports.saltAndHash = void 0;
+var bcrypt = require("bcrypt");
+var userController_1 = require("../controllers/userController");
+var saltRounds = 10;
+var saltAndHash = function (password) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        return [2 /*return*/, bcrypt
+                .genSalt(saltRounds)
+                .then(function (salt) {
+                return new Promise(function (resolve, reject) {
+                    bcrypt.hash(password, salt, function (err, hash) {
+                        if (err) {
+                            reject(err);
+                        }
+                        else {
+                            resolve({ salt: salt, hash: hash });
+                        }
+                    });
+                });
+            })
+                .catch(function (err) {
+                throw err;
+            })];
+    });
+}); };
+exports.saltAndHash = saltAndHash;
 module.exports = {
     signup: function (args) { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
-            return [2 /*return*/, userController.createUser(args)];
+            return [2 /*return*/, userController_1.createUser(args)];
         });
     }); },
+    validateUser: function (args) { return __awaiter(void 0, void 0, void 0, function () {
+        var query, user, password, hash;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    query = {};
+                    if (args["username"] !== undefined) {
+                        query = { username: args["username"] };
+                    }
+                    else if (args["email"] !== undefined) {
+                        query = { email: args["email"] };
+                    }
+                    else {
+                        throw new Error("Missing credentials");
+                    }
+                    return [4 /*yield*/, userController_1.getUser(query)];
+                case 1:
+                    user = _a.sent();
+                    if (!user) {
+                        throw new Error("User not found.");
+                    }
+                    password = args["password"];
+                    hash = user.get("passwordHash");
+                    return [2 /*return*/, bcrypt.compare(password, hash)];
+            }
+        });
+    }); },
+    saltAndHash: exports.saltAndHash,
 };

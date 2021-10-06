@@ -39,6 +39,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var passport = require("passport");
 var LocalStrategy = require("passport-local").Strategy;
 var user_1 = require("../models/user");
+var authController = require("../controllers/authController");
+var userController = require("../controllers/userController");
 module.exports = function () {
     var _this = this;
     passport.use("email-local", new LocalStrategy({
@@ -51,13 +53,15 @@ module.exports = function () {
                 case 0:
                     _a.trys.push([0, 3, , 4]);
                     console.log("awaiting finding user");
-                    return [4 /*yield*/, user_1.findUser({ email: username })];
+                    return [4 /*yield*/, userController.findUser({
+                            email: username,
+                        })];
                 case 1:
                     user = _a.sent();
                     if (!user) {
                         return [2 /*return*/, done(null, false, { message: "User cannot be found." })];
                     }
-                    return [4 /*yield*/, user_1.validateUser({
+                    return [4 /*yield*/, authController.validateUser({
                             username: user.username,
                             password: password,
                         })];
@@ -81,13 +85,15 @@ module.exports = function () {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 3, , 4]);
-                    return [4 /*yield*/, user_1.findUser({ username: username })];
+                    return [4 /*yield*/, userController.findUser({
+                            username: username,
+                        })];
                 case 1:
                     user = _a.sent();
                     if (!user) {
                         return [2 /*return*/, done(null, false, { message: "User cannot be found." })];
                     }
-                    return [4 /*yield*/, user_1.validateUser({
+                    return [4 /*yield*/, authController.validateUser({
                             username: username,
                             password: password,
                         })];
