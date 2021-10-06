@@ -72,6 +72,11 @@ module.exports = {
   removeStatus: async (statusId: string) => {
     return await Status.findByIdAndDelete(statusId)
       .exec()
+      .then((status: typeof Status) => {
+        var user = status.user;
+        userController.removeStatusFromUser(user.id, status.id);
+        return status;
+      })
       .catch((err: any) => {
         throw err;
       });

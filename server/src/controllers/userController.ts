@@ -1,6 +1,13 @@
-import { updateUser, User, createUser, findUser, deleteUser } from "../models/user";
+import {
+  updateUser,
+  User,
+  createUser,
+  findUser,
+  deleteUser,
+} from "../models/user";
 
 module.exports = {
+  
   createUser: async (args: {
     username: string;
     email: string;
@@ -29,7 +36,7 @@ module.exports = {
   },
 
   deleteUser: (userId: string) => {
-      deleteUser({_id: userId});
+    deleteUser({ _id: userId });
   },
 
   addStatusToUser: (userId: string, postId: string, callback: any) => {
