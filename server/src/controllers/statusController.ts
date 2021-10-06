@@ -26,24 +26,15 @@ export async function updateStatus(
   return await Status.findOneAndUpdate(filter, doc, { new: new_doc }).exec();
 }
 
-
+var addCommentToStatus = async (statusId: string, commentId: string) => {
+  return Status.findByIdAndUpdate(statusId, {
+    $addToSet: { comments: { _id: commentId } },
+  }).exec();
+};
 
 module.exports = {
+  /* CREATE */
   createStatus: createStatus,
-  readStatus: readStatus,
-  updateStatus: updateStatus,
-  
-  /**
-   *
-   * @param userId
-   * @returns
-   */
-  getAllStatuses: (userId: string) => {
-    var statuses = readStatus({
-      user: userId,
-    });
-    return statuses;
-  },
 
   /**
    * Add a status from user
@@ -66,6 +57,46 @@ module.exports = {
   },
 
   /**
+   * Add a comment to a status. returns the comment if successful
+   * @param userId {String}: the current user's id
+   * @param parentId {String}: the id of the parent post
+   * @param content {String} The comment's content
+   * @returns
+   */
+  addComment: (userId: string, parentId: string, content: string) => {
+    return createStatus({
+      user: userId,
+      parentId: parentId,
+      content: content,
+    })
+      .then(async (comment: typeof Status) => {
+        await addCommentToStatus(parentId, comment.id);
+        await userController.addStatusToUser(userId, comment.id);
+        return comment;
+      })
+      .catch((err: any) => {
+        // rollback
+        throw err;
+      });
+  },
+
+  /* READ */
+
+  readStatus: readStatus,
+
+  /**
+   *
+   * @param userId
+   * @returns
+   */
+  getAllStatuses: (userId: string) => {
+    var statuses = readStatus({
+      user: userId,
+    });
+    return statuses;
+  },
+
+  /**
    * Get a status by id
    * @param statusId
    * @returns Status
@@ -73,34 +104,6 @@ module.exports = {
   getStatus: async (statusId: string) => {
     return await Status.findById(statusId)
       .exec()
-      .catch((err: any) => {
-        throw err;
-      });
-  },
-
-  /**
-   * edit a status by id
-   * @param statusId
-   * @param content
-   * @returns Promise<Status>
-   */
-  editStatus: async (statusId: string, content: string) => {
-    return await updateStatus({ _id: statusId }, { content: content }, true);
-  },
-
-  /**
-   * remove a status by id. returns the document if found
-   * @param statusId
-   * @returns Status
-   */
-  removeStatus: async (statusId: string) => {
-    return await Status.findByIdAndDelete(statusId)
-      .exec()
-      .then((status: typeof Status) => {
-        var user = status.user;
-        userController.removeStatusFromUser(user.id, status.id);
-        return status;
-      })
       .catch((err: any) => {
         throw err;
       });
@@ -116,44 +119,17 @@ module.exports = {
     return comments;
   },
 
-  /**
-   * Add a comment to a status. returns the comment if successful
-   * @param userId {String}: the current user's id
-   * @param parentId {String}: the id of the parent post
-   * @param content {String} The comment's content
-   * @returns
-   */
-  addComment: (userId: string, parentId: string, content: string) => {
-    return createStatus({
-      user: userId,
-      parentId: parentId,
-      content: content,
-    })
-      .then((comment: typeof Status) => {
-        Status.findByIdAndUpdate(parentId, {
-          $addToSet: { comments: { _id: comment.id } },
-        }).exec();
-        return comment;
-      })
-      .then((comment: typeof Status) => {
-        userController.addStatusToUser(userId, comment.id);
-        return comment;
-      })
-      .catch((err: any) => {
-        // rollback
-        throw err;
-      });
-  },
+  /** Update */
+  updateStatus: updateStatus,
 
   /**
-   * Remove a comment from status. Returns the status if found. Wrapper for removeStatus.
+   * edit a status by id
    * @param statusId
-   * @returns Status
+   * @param content
+   * @returns Promise<Status>
    */
-  removeComment: async (statusId: string) => {
-    return await module.exports.removeStatus(statusId).catch((err: any) => {
-      throw err;
-    });
+  editStatus: async (statusId: string, content: string) => {
+    return await updateStatus({ _id: statusId }, { content: content }, true);
   },
 
   /**
@@ -187,9 +163,39 @@ module.exports = {
   },
 
   /* DELETE */
+
   deleteStatus: (args: object) => {
     return Status.deleteOne(args).catch((err: any) => {
       if (err) throw err;
+    });
+  },
+
+  /**
+   * remove a status by id. returns the document if found
+   * @param statusId
+   * @returns Status
+   */
+  removeStatus: async (statusId: string) => {
+    return await Status.findByIdAndDelete(statusId)
+      .exec()
+      .then((status: typeof Status) => {
+        var user = status.user;
+        userController.removeStatusFromUser(user.id, status.id);
+        return status;
+      })
+      .catch((err: any) => {
+        throw err;
+      });
+  },
+
+  /**
+   * Remove a comment from status. Returns the status if found. Wrapper for removeStatus.
+   * @param statusId
+   * @returns Status
+   */
+  removeComment: async (statusId: string) => {
+    return await module.exports.removeStatus(statusId).catch((err: any) => {
+      throw err;
     });
   },
 };

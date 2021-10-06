@@ -67,21 +67,16 @@ function updateStatus(filter, doc, new_doc) {
     });
 }
 exports.updateStatus = updateStatus;
+var addCommentToStatus = function (statusId, commentId) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        return [2 /*return*/, status_1.Status.findByIdAndUpdate(statusId, {
+                $addToSet: { comments: { _id: commentId } },
+            }).exec()];
+    });
+}); };
 module.exports = {
+    /* CREATE */
     createStatus: createStatus,
-    readStatus: readStatus,
-    updateStatus: updateStatus,
-    /**
-     *
-     * @param userId
-     * @returns
-     */
-    getAllStatuses: function (userId) {
-        var statuses = readStatus({
-            user: userId,
-        });
-        return statuses;
-    },
     /**
      * Add a status from user
      * @param userId
@@ -102,6 +97,50 @@ module.exports = {
         });
     },
     /**
+     * Add a comment to a status. returns the comment if successful
+     * @param userId {String}: the current user's id
+     * @param parentId {String}: the id of the parent post
+     * @param content {String} The comment's content
+     * @returns
+     */
+    addComment: function (userId, parentId, content) {
+        return createStatus({
+            user: userId,
+            parentId: parentId,
+            content: content,
+        })
+            .then(function (comment) { return __awaiter(void 0, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, addCommentToStatus(parentId, comment.id)];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, userController.addStatusToUser(userId, comment.id)];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/, comment];
+                }
+            });
+        }); })
+            .catch(function (err) {
+            // rollback
+            throw err;
+        });
+    },
+    /* READ */
+    readStatus: readStatus,
+    /**
+     *
+     * @param userId
+     * @returns
+     */
+    getAllStatuses: function (userId) {
+        var statuses = readStatus({
+            user: userId,
+        });
+        return statuses;
+    },
+    /**
      * Get a status by id
      * @param statusId
      * @returns Status
@@ -119,6 +158,17 @@ module.exports = {
         });
     }); },
     /**
+     * Get all comments of a status
+     * @param statusId
+     * @returns
+     */
+    getComments: function (statusId) {
+        var comments = readStatus({ _id: statusId }).comments;
+        return comments;
+    },
+    /** Update */
+    updateStatus: updateStatus,
+    /**
      * edit a status by id
      * @param statusId
      * @param content
@@ -128,80 +178,6 @@ module.exports = {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, updateStatus({ _id: statusId }, { content: content }, true)];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
-        });
-    }); },
-    /**
-     * remove a status by id. returns the document if found
-     * @param statusId
-     * @returns Status
-     */
-    removeStatus: function (statusId) { return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, status_1.Status.findByIdAndDelete(statusId)
-                        .exec()
-                        .then(function (status) {
-                        var user = status.user;
-                        userController.removeStatusFromUser(user.id, status.id);
-                        return status;
-                    })
-                        .catch(function (err) {
-                        throw err;
-                    })];
-                case 1: return [2 /*return*/, _a.sent()];
-            }
-        });
-    }); },
-    /**
-     * Get all comments of a status
-     * @param statusId
-     * @returns
-     */
-    getComments: function (statusId) {
-        var comments = readStatus({ _id: statusId }).comments;
-        return comments;
-    },
-    /**
-     * Add a comment to a status. returns the comment if successful
-     * @param userId {String}: the current user's id
-     * @param parentId {String}: the id of the parent post
-     * @param content {String} The comment's content
-     * @returns
-     */
-    addComment: function (userId, parentId, content) {
-        return createStatus({
-            user: userId,
-            parentId: parentId,
-            content: content,
-        })
-            .then(function (comment) {
-            status_1.Status.findByIdAndUpdate(parentId, {
-                $addToSet: { comments: { _id: comment.id } },
-            }).exec();
-            return comment;
-        })
-            .then(function (comment) {
-            userController.addStatusToUser(userId, comment.id);
-            return comment;
-        })
-            .catch(function (err) {
-            // rollback
-            throw err;
-        });
-    },
-    /**
-     * Remove a comment from status. Returns the status if found. Wrapper for removeStatus.
-     * @param statusId
-     * @returns Status
-     */
-    removeComment: function (statusId) { return __awaiter(void 0, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, module.exports.removeStatus(statusId).catch(function (err) {
-                        throw err;
-                    })];
                 case 1: return [2 /*return*/, _a.sent()];
             }
         });
@@ -251,4 +227,41 @@ module.exports = {
                 throw err;
         });
     },
+    /**
+     * remove a status by id. returns the document if found
+     * @param statusId
+     * @returns Status
+     */
+    removeStatus: function (statusId) { return __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, status_1.Status.findByIdAndDelete(statusId)
+                        .exec()
+                        .then(function (status) {
+                        var user = status.user;
+                        userController.removeStatusFromUser(user.id, status.id);
+                        return status;
+                    })
+                        .catch(function (err) {
+                        throw err;
+                    })];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    }); },
+    /**
+     * Remove a comment from status. Returns the status if found. Wrapper for removeStatus.
+     * @param statusId
+     * @returns Status
+     */
+    removeComment: function (statusId) { return __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, module.exports.removeStatus(statusId).catch(function (err) {
+                        throw err;
+                    })];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    }); },
 };

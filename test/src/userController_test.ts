@@ -1,6 +1,5 @@
 export {};
 
-let mongoose = require("mongoose");
 
 let { User } = require("../../server/dist/models/user");
 let { ready } = require("../../server/dist/server");
