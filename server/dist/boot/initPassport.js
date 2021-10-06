@@ -53,7 +53,7 @@ module.exports = function () {
                 case 0:
                     _a.trys.push([0, 3, , 4]);
                     console.log("awaiting finding user");
-                    return [4 /*yield*/, userController.findUser({
+                    return [4 /*yield*/, userController.getUser({
                             email: username,
                         })];
                 case 1:
@@ -85,7 +85,7 @@ module.exports = function () {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 3, , 4]);
-                    return [4 /*yield*/, userController.findUser({
+                    return [4 /*yield*/, userController.getUser({
                             username: username,
                         })];
                 case 1:

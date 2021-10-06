@@ -85,13 +85,14 @@ module.exports = {
   readStatus: readStatus,
 
   /**
-   *
+   * Get all non-deleted statuses of a user
    * @param userId
    * @returns
    */
   getAllStatuses: (userId: string) => {
     var statuses = readStatus({
       user: userId,
+      deleted: false
     });
     return statuses;
   },
@@ -162,6 +163,13 @@ module.exports = {
       });
   },
 
+  markAsDeleted: async (statusId: string) => {
+    return await Status.findByIdAndUpdate(statusId, {
+      deleted: true}).exec().catch((err: any) => {
+        throw err;
+      });
+  },
+
   /* DELETE */
 
   deleteStatus: (args: object) => {
@@ -198,4 +206,5 @@ module.exports = {
       throw err;
     });
   },
+
 };

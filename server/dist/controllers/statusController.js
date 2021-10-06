@@ -130,13 +130,14 @@ module.exports = {
     /* READ */
     readStatus: readStatus,
     /**
-     *
+     * Get all non-deleted statuses of a user
      * @param userId
      * @returns
      */
     getAllStatuses: function (userId) {
         var statuses = readStatus({
             user: userId,
+            deleted: false
         });
         return statuses;
     },
@@ -214,6 +215,18 @@ module.exports = {
                     })
                         .exec()
                         .catch(function (err) {
+                        throw err;
+                    })];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    }); },
+    markAsDeleted: function (statusId) { return __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, status_1.Status.findByIdAndUpdate(statusId, {
+                        deleted: true
+                    }).exec().catch(function (err) {
                         throw err;
                     })];
                 case 1: return [2 /*return*/, _a.sent()];

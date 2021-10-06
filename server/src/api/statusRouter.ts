@@ -8,32 +8,40 @@ var statusController = require("../controllers/statusController");
 var userController = require("../controllers/userController");
 
 /**
- *  /api/:userId
+ *  /api/user/:userId/status
  * Get all posts of user
  */
-statusRouter.get("/", (req: Request, res: Response) => {
+statusRouter.get("/", async (req: Request, res: Response) => {
   var userId = req.params.userId;
-  var posts = statusController.getAllStatuses(userId);
+  var posts = await statusController.getAllStatuses(userId);
+  res.json(posts);
 });
 
 /**
- * /api/:userId/
+ * /api/user/:userId/status
  * Add a post or comment
  */
-statusRouter.post("/", (req: Request, res: Response) => {
+statusRouter.post("/", async (req: Request, res: Response) => {
   var userId = req.params.userId;
   var content = req.body.content;
   if ("parentId" in req.body) {
     var parentId = req.body.parentId;
-    var post = statusController.addComment(userId, parentId, content);
-    userController.addStatusToUser(userId, post.id);
+    var post = await statusController.addComment(userId, parentId, content);
+    await userController.addStatusToUser(userId, post.id);
+    res.json({success: true});
   } else {
-    var post = statusController.addStatus(userId, content);
-    userController.addStatusToUser(userId, post.id);
+    var post = await statusController.addStatus(userId, content);
+    await userController.addStatusToUser(userId, post.id);
+    res.json({success: true});
   }
+
+  
 });
 
-// Get a post by postId
+/** 
+ * /api/user/:userId/status/:postId
+ * Get post by id
+*/
 statusRouter.get("/:postId", (req: Request, res: Response) => {
   var postId = req.params.postId;
 
@@ -53,14 +61,20 @@ statusRouter.get("/:postId", (req: Request, res: Response) => {
     });
 });
 
-// edit a post
+/** 
+ * /api/user/:userId/status/:postId
+ * edit post by id
+*/
 statusRouter.put("/:postId", (req: Request, res: Response) => {
   var postId = req.params.postId;
   var content = req.body.content;
   statusController.editStatus(postId, content);
 });
 
-// delete a post
+/** 
+ * /api/user/:userId/status/:postId
+ * delete post by id
+*/
 statusRouter.delete("/:postId", (req: Request, res: Response) => {
   var userId = req.params.userId;
   var postId = req.params.postId;
@@ -74,7 +88,10 @@ statusRouter.delete("/:postId", (req: Request, res: Response) => {
   }
 });
 
-// Add a like to a post
+/** 
+ * /api/user/:userId/status/:postId/like
+ * 
+*/
 statusRouter.post("/:postId/like", (req: Request, res: Response) => {
   var postId = req.params.postId;
   var postUserId = req.params.userId;
@@ -97,6 +114,11 @@ statusRouter.post("/:postId/like", (req: Request, res: Response) => {
   );
 });
 
+
+/** 
+ * /api/user/:userId/status/:postId/unlike
+ * 
+*/
 statusRouter.post("/:postId/unlike", (req: Request, res: Response) => {
   var postId = req.params.postId;
   var postUserId = req.params.userId;

@@ -3,6 +3,7 @@ const LocalStrategy = require("passport-local").Strategy;
 import { User } from "../models/user";
 var authController = require("../controllers/authController");
 var userController = require("../controllers/userController");
+
 module.exports = function () {
   passport.use(
     "email-local",
@@ -14,7 +15,7 @@ module.exports = function () {
       async (username: string, password: string, done: any) => {
         try {
           console.log("awaiting finding user");
-          var user: typeof User = await userController.findUser({
+          var user: typeof User = await userController.getUser({
             email: username,
           });
           if (!user) {
@@ -41,7 +42,7 @@ module.exports = function () {
     "username-local",
     new LocalStrategy(async (username: string, password: string, done: any) => {
       try {
-        var user: typeof User = await userController.findUser({
+        var user: typeof User = await userController.getUser({
           username: username,
         });
         if (!user) {

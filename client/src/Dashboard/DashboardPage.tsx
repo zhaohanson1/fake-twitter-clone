@@ -33,8 +33,9 @@ const useStyles = makeStyles((_theme) => ({
 
 export default function Dashboard() {
   const [classes, _setClasses] = useState(useStyles());
-  
+
   const [user, hasFetched] = useUser();
+  
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
@@ -42,7 +43,7 @@ export default function Dashboard() {
         <DashboardHeader />
         <Grid container direction="row" spacing={1}>
           <DashboardNav classes={classes} />
-          <DashboardContent classes={classes} />
+          <DashboardContent classes={classes} user={user}/>
           <DashboardWidget classes={classes} />
         </Grid>
       </ThemeProvider>

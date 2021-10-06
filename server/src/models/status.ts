@@ -20,6 +20,10 @@ var StatusSchema = new Schema({
     type: Schema.Types.ObjectId,
     default: null,
   },
+  deleted: {
+    type: Boolean,
+    default: false
+  }
 });
 
 export var Status = mongoose.model("StatusModel", StatusSchema);
