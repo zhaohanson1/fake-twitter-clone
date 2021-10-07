@@ -8,45 +8,42 @@ var statusController = require("../controllers/statusController");
 var userController = require("../controllers/userController");
 
 /**
- *  /api/user/:userId/status
- * Get all posts of user
+ *  GET /api/status/
+ * Get all statuses
  */
 statusRouter.get("/", async (req: Request, res: Response) => {
-  var userId = req.params.userId;
-  var posts = await statusController.getAllStatuses(userId);
+  var posts = await statusController.getAllStatuses();
   res.json(posts);
 });
 
 /**
- * /api/user/:userId/status
+ * POST /api/status/
  * Add a post or comment
  */
 statusRouter.post("/", async (req: Request, res: Response) => {
-  var userId = req.params.userId;
+  var userId = req.body.userId;
   var content = req.body.content;
   if ("parentId" in req.body) {
     var parentId = req.body.parentId;
     var post = await statusController.addComment(userId, parentId, content);
     await userController.addStatusToUser(userId, post.id);
-    res.json({success: true});
+    res.json({ success: true });
   } else {
     var post = await statusController.addStatus(userId, content);
     await userController.addStatusToUser(userId, post.id);
-    res.json({success: true});
+    res.json({ success: true });
   }
-
-  
 });
 
-/** 
- * /api/user/:userId/status/:postId
+/**
+ * GET /api/status/:statusId
  * Get post by id
-*/
-statusRouter.get("/:postId", (req: Request, res: Response) => {
-  var postId = req.params.postId;
+ */
+statusRouter.get("/:statusId", (req: Request, res: Response) => {
+  var statusId = req.params.statusId;
 
   statusController
-    .getStatus(postId)
+    .getStatus(statusId)
     .then((status: typeof Status) => {
       if (!status) {
         res.json({ success: false, content: null });
@@ -61,45 +58,58 @@ statusRouter.get("/:postId", (req: Request, res: Response) => {
     });
 });
 
-/** 
- * /api/user/:userId/status/:postId
+/**
+ * PUT /api/status/:statusId
  * edit post by id
-*/
-statusRouter.put("/:postId", (req: Request, res: Response) => {
-  var postId = req.params.postId;
+ */
+statusRouter.put("/:statusId", (req: Request, res: Response) => {
+  var statusId = req.params.statusId;
   var content = req.body.content;
-  statusController.editStatus(postId, content);
+  statusController
+    .editStatus(statusId, content)
+    .then((status: typeof Status) => {
+      res.json({ success: true });
+    })
+    .catch((err: any) => {
+      console.error(err);
+      res.json({ success: false });
+    });
 });
 
-/** 
- * /api/user/:userId/status/:postId
+/**
+ * /api/status/:statusId
  * delete post by id
-*/
-statusRouter.delete("/:postId", (req: Request, res: Response) => {
-  var userId = req.params.userId;
-  var postId = req.params.postId;
-  var status = statusController.getStatus(postId);
-  if (status.parent === null) {
-    statusController.removeStatus(postId);
-    userController.removeStatusFromUser(postId);
-  } else {
-    statusController.removeComment(postId);
-    userController.removeStatusFromUser(postId);
+ */
+statusRouter.delete("/:statusId", (req: Request, res: Response) => {
+  var statusId = req.params.statusId;
+  var status = statusController.getStatus(statusId);
+  try {
+    if (status.parent === null) {
+      statusController.removeStatus(statusId);
+      userController.removeStatusFromUser(statusId);
+    } else {
+      statusController.removeComment(statusId);
+      userController.removeStatusFromUser(statusId);
+    }
+    res.json({success: true});
+  } catch (err: any) {
+    console.error(err);
+    res.json({success: false});
   }
+  
+
 });
 
-/** 
- * /api/user/:userId/status/:postId/like
- * 
-*/
-statusRouter.post("/:postId/like", (req: Request, res: Response) => {
-  var postId = req.params.postId;
-  var postUserId = req.params.userId;
+/**
+ * PUT /api/status/:statusId/like
+ *
+ */
+statusRouter.post("/:statusId/like", (req: Request, res: Response) => {
+  var statusId = req.params.statusId;
   var likeUserId = req.params.user;
 
   statusController.addLike(
-    postUserId,
-    postId,
+    statusId,
     likeUserId,
     (err: any, status: typeof Status) => {
       if (err) {
@@ -114,17 +124,14 @@ statusRouter.post("/:postId/like", (req: Request, res: Response) => {
   );
 });
 
-
-/** 
- * /api/user/:userId/status/:postId/unlike
- * 
-*/
-statusRouter.post("/:postId/unlike", (req: Request, res: Response) => {
-  var postId = req.params.postId;
-  var postUserId = req.params.userId;
+/**
+ * PUT /api/status/:statusId/unlike
+ *
+ */
+statusRouter.post("/:statusId/unlike", (req: Request, res: Response) => {
+  var postId = req.params.statusId;
   var likeUserId = req.params.user;
   statusController.removeLike(
-    postUserId,
     postId,
     likeUserId,
     (err: any, status: typeof Status) => {
@@ -140,4 +147,4 @@ statusRouter.post("/:postId/unlike", (req: Request, res: Response) => {
   );
 });
 
-module.exports = { statusRouter: statusRouter };
+module.exports = statusRouter;

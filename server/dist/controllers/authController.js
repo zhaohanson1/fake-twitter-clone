@@ -40,27 +40,29 @@ exports.saltAndHash = void 0;
 var bcrypt = require("bcrypt");
 var userController_1 = require("../controllers/userController");
 var saltRounds = 10;
-var saltAndHash = function (password) { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        return [2 /*return*/, bcrypt
-                .genSalt(saltRounds)
-                .then(function (salt) {
-                return new Promise(function (resolve, reject) {
-                    bcrypt.hash(password, salt, function (err, hash) {
-                        if (err) {
-                            reject(err);
-                        }
-                        else {
-                            resolve({ salt: salt, hash: hash });
-                        }
+function saltAndHash(password) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/, bcrypt
+                    .genSalt(saltRounds)
+                    .then(function (salt) {
+                    return new Promise(function (resolve, reject) {
+                        bcrypt.hash(password, salt, function (err, hash) {
+                            if (err) {
+                                reject(err);
+                            }
+                            else {
+                                resolve({ salt: salt, hash: hash });
+                            }
+                        });
                     });
-                });
-            })
-                .catch(function (err) {
-                throw err;
-            })];
+                })
+                    .catch(function (err) {
+                    throw err;
+                })];
+        });
     });
-}); };
+}
 exports.saltAndHash = saltAndHash;
 module.exports = {
     signup: function (args) { return __awaiter(void 0, void 0, void 0, function () {
@@ -95,5 +97,5 @@ module.exports = {
             }
         });
     }); },
-    saltAndHash: exports.saltAndHash,
+    saltAndHash: saltAndHash,
 };

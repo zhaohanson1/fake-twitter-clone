@@ -42,16 +42,14 @@ exports.statusRouter = express_1.Router({ mergeParams: true });
 var statusController = require("../controllers/statusController");
 var userController = require("../controllers/userController");
 /**
- *  /api/user/:userId/status
- * Get all posts of user
+ *  GET /api/status/
+ * Get all statuses
  */
 exports.statusRouter.get("/", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userId, posts;
+    var posts;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                userId = req.params.userId;
-                return [4 /*yield*/, statusController.getAllStatuses(userId)];
+            case 0: return [4 /*yield*/, statusController.getAllStatuses()];
             case 1:
                 posts = _a.sent();
                 res.json(posts);
@@ -60,7 +58,7 @@ exports.statusRouter.get("/", function (req, res) { return __awaiter(void 0, voi
     });
 }); });
 /**
- * /api/user/:userId/status
+ * POST /api/status/
  * Add a post or comment
  */
 exports.statusRouter.post("/", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
@@ -68,7 +66,7 @@ exports.statusRouter.post("/", function (req, res) { return __awaiter(void 0, vo
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                userId = req.params.userId;
+                userId = req.body.userId;
                 content = req.body.content;
                 if (!("parentId" in req.body)) return [3 /*break*/, 3];
                 parentId = req.body.parentId;
@@ -93,13 +91,13 @@ exports.statusRouter.post("/", function (req, res) { return __awaiter(void 0, vo
     });
 }); });
 /**
- * /api/user/:userId/status/:postId
+ * GET /api/status/:statusId
  * Get post by id
-*/
-exports.statusRouter.get("/:postId", function (req, res) {
-    var postId = req.params.postId;
+ */
+exports.statusRouter.get("/:statusId", function (req, res) {
+    var statusId = req.params.statusId;
     statusController
-        .getStatus(postId)
+        .getStatus(statusId)
         .then(function (status) {
         if (!status) {
             res.json({ success: false, content: null });
@@ -115,40 +113,53 @@ exports.statusRouter.get("/:postId", function (req, res) {
     });
 });
 /**
- * /api/user/:userId/status/:postId
+ * PUT /api/status/:statusId
  * edit post by id
-*/
-exports.statusRouter.put("/:postId", function (req, res) {
-    var postId = req.params.postId;
+ */
+exports.statusRouter.put("/:statusId", function (req, res) {
+    var statusId = req.params.statusId;
     var content = req.body.content;
-    statusController.editStatus(postId, content);
+    statusController
+        .editStatus(statusId, content)
+        .then(function (status) {
+        res.json({ success: true });
+    })
+        .catch(function (err) {
+        console.error(err);
+        res.json({ success: false });
+    });
 });
 /**
- * /api/user/:userId/status/:postId
+ * /api/status/:statusId
  * delete post by id
-*/
-exports.statusRouter.delete("/:postId", function (req, res) {
-    var userId = req.params.userId;
-    var postId = req.params.postId;
-    var status = statusController.getStatus(postId);
-    if (status.parent === null) {
-        statusController.removeStatus(postId);
-        userController.removeStatusFromUser(postId);
+ */
+exports.statusRouter.delete("/:statusId", function (req, res) {
+    var statusId = req.params.statusId;
+    var status = statusController.getStatus(statusId);
+    try {
+        if (status.parent === null) {
+            statusController.removeStatus(statusId);
+            userController.removeStatusFromUser(statusId);
+        }
+        else {
+            statusController.removeComment(statusId);
+            userController.removeStatusFromUser(statusId);
+        }
+        res.json({ success: true });
     }
-    else {
-        statusController.removeComment(postId);
-        userController.removeStatusFromUser(postId);
+    catch (err) {
+        console.error(err);
+        res.json({ success: false });
     }
 });
 /**
- * /api/user/:userId/status/:postId/like
+ * PUT /api/status/:statusId/like
  *
-*/
-exports.statusRouter.post("/:postId/like", function (req, res) {
-    var postId = req.params.postId;
-    var postUserId = req.params.userId;
+ */
+exports.statusRouter.post("/:statusId/like", function (req, res) {
+    var statusId = req.params.statusId;
     var likeUserId = req.params.user;
-    statusController.addLike(postUserId, postId, likeUserId, function (err, status) {
+    statusController.addLike(statusId, likeUserId, function (err, status) {
         if (err) {
             res.json({ success: false });
         }
@@ -161,14 +172,13 @@ exports.statusRouter.post("/:postId/like", function (req, res) {
     });
 });
 /**
- * /api/user/:userId/status/:postId/unlike
+ * PUT /api/status/:statusId/unlike
  *
-*/
-exports.statusRouter.post("/:postId/unlike", function (req, res) {
-    var postId = req.params.postId;
-    var postUserId = req.params.userId;
+ */
+exports.statusRouter.post("/:statusId/unlike", function (req, res) {
+    var postId = req.params.statusId;
     var likeUserId = req.params.user;
-    statusController.removeLike(postUserId, postId, likeUserId, function (err, status) {
+    statusController.removeLike(postId, likeUserId, function (err, status) {
         if (err) {
             res.json({ success: false });
         }
@@ -180,4 +190,4 @@ exports.statusRouter.post("/:postId/unlike", function (req, res) {
         }
     });
 });
-module.exports = { statusRouter: exports.statusRouter };
+module.exports = exports.statusRouter;

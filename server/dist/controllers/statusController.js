@@ -84,6 +84,7 @@ module.exports = {
      * @returns Boolean: true if sucess
      */
     addStatus: function (userId, content) {
+        console.log(userId);
         return createStatus({
             user: userId,
             content: content,
@@ -130,14 +131,21 @@ module.exports = {
     /* READ */
     readStatus: readStatus,
     /**
+     * Get all statuses from all users (excluding deleted)
+     * @returns
+     */
+    getAllStatuses: function () {
+        return readStatus({ deleted: false });
+    },
+    /**
      * Get all non-deleted statuses of a user
      * @param userId
      * @returns
      */
-    getAllStatuses: function (userId) {
+    getStatusesOfUser: function (userId) {
         var statuses = readStatus({
             user: userId,
-            deleted: false
+            deleted: false,
         });
         return statuses;
     },
@@ -178,7 +186,9 @@ module.exports = {
     editStatus: function (statusId, content) { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, updateStatus({ _id: statusId }, { content: content }, true)];
+                case 0:
+                    console.log(statusId);
+                    return [4 /*yield*/, updateStatus({ _id: ObjectId(statusId) }, { content: content }, true)];
                 case 1: return [2 /*return*/, _a.sent()];
             }
         });
@@ -225,8 +235,10 @@ module.exports = {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, status_1.Status.findByIdAndUpdate(statusId, {
-                        deleted: true
-                    }).exec().catch(function (err) {
+                        deleted: true,
+                    })
+                        .exec()
+                        .catch(function (err) {
                         throw err;
                     })];
                 case 1: return [2 /*return*/, _a.sent()];

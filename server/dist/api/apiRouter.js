@@ -4,10 +4,12 @@ exports.router = void 0;
 var express_1 = require("express");
 var authRouter = require("./authRouter");
 var userRouter = require("./userRouter");
+var statusRouter = require("./statusRouter");
 // eslint-disable-next-line new-cap
 exports.router = express_1.Router();
 exports.router.use("/auth", authRouter);
 exports.router.use("/user", userRouter);
+exports.router.use("/status", statusRouter);
 exports.router.get("/*", function (_req, res) {
     res.json({ message: "Invalid request" });
 });

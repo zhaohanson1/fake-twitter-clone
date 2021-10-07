@@ -1,9 +1,8 @@
 const bcrypt = require("bcrypt");
-import {createUser, getUser} from "../controllers/userController";
+import { createUser, getUser } from "../controllers/userController";
+
 var saltRounds = 10;
-
-
-export const saltAndHash = async (password: string) => {
+export async function saltAndHash(password: string) {
   return bcrypt
     .genSalt(saltRounds)
     .then((salt: string) => {
@@ -23,7 +22,6 @@ export const saltAndHash = async (password: string) => {
 }
 
 module.exports = {
-  
   signup: async (args: {
     username: string;
     email: string;

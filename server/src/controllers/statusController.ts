@@ -43,6 +43,7 @@ module.exports = {
    * @returns Boolean: true if sucess
    */
   addStatus: (userId: string, content: string) => {
+    console.log(userId)
     return createStatus({
       user: userId,
       content: content,
@@ -85,14 +86,22 @@ module.exports = {
   readStatus: readStatus,
 
   /**
+   * Get all statuses from all users (excluding deleted)
+   * @returns
+   */
+  getAllStatuses: () => {
+    return readStatus({ deleted: false });
+  },
+
+  /**
    * Get all non-deleted statuses of a user
    * @param userId
    * @returns
    */
-  getAllStatuses: (userId: string) => {
+  getStatusesOfUser: (userId: string) => {
     var statuses = readStatus({
       user: userId,
-      deleted: false
+      deleted: false,
     });
     return statuses;
   },
@@ -130,7 +139,8 @@ module.exports = {
    * @returns Promise<Status>
    */
   editStatus: async (statusId: string, content: string) => {
-    return await updateStatus({ _id: statusId }, { content: content }, true);
+    console.log(statusId);
+    return await updateStatus({ _id: ObjectId(statusId) }, { content: content }, true);
   },
 
   /**
@@ -165,7 +175,10 @@ module.exports = {
 
   markAsDeleted: async (statusId: string) => {
     return await Status.findByIdAndUpdate(statusId, {
-      deleted: true}).exec().catch((err: any) => {
+      deleted: true,
+    })
+      .exec()
+      .catch((err: any) => {
         throw err;
       });
   },
@@ -206,5 +219,4 @@ module.exports = {
       throw err;
     });
   },
-
 };

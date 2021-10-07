@@ -2,16 +2,17 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userRouter = void 0;
 var express_1 = require("express");
-var statusRouter_1 = require("./statusRouter");
 exports.userRouter = express_1.Router({ mergeParams: true });
 var userController = require("../controllers/userController");
-/*
-// Get all users
-userRouter.get("/", (req: Request, res: Response) => {
-
-});
-*/
-// Create a user
+/**
+ * GET /api/user
+ * get all users
+ */
+exports.userRouter.get("/", function (req, res) { });
+/**
+ * POST /api/user/
+ * create new user
+ */
 exports.userRouter.post("/", function (req, res) {
     var args = {
         email: req.body.email,
@@ -30,22 +31,30 @@ exports.userRouter.post("/", function (req, res) {
         res.json({ success: false, message: err.message });
     });
 });
-// Get a user
+/**
+ * GET /api/user/:userid
+ * get user by id
+ */
 exports.userRouter.get("/:userId", function (req, res) {
     var userId = req.params.userId;
     var user = userController.getUserById(userId);
     res.json(user);
 });
-// Update a user
+/**
+ * PUT /api/user/:userid
+ * edit user by id
+ */
 exports.userRouter.post("/:userId", function (req, res) {
     var userId = req.params.userId;
     var attributes = req.body;
     userController.updateUser({ _id: userId }, attributes);
 });
-// Delete a user
+/**
+ * DELETE /api/user/:userid
+ * delete user by id
+ */
 exports.userRouter.delete("/:userId", function (req, res) {
     var userId = req.params.userId;
     userController.deleteUserById(userId);
 });
-exports.userRouter.use("/:userId/status", statusRouter_1.statusRouter);
 module.exports = exports.userRouter;

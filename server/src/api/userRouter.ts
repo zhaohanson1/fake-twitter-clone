@@ -1,18 +1,17 @@
 import { Router, Request, Response } from "express";
-
-import { statusRouter } from "./statusRouter";
-
 export const userRouter = Router({ mergeParams: true });
 var userController = require("../controllers/userController");
 
-/* 
-// Get all users
-userRouter.get("/", (req: Request, res: Response) => {
+/**
+ * GET /api/user
+ * get all users
+ */
+userRouter.get("/", (req: Request, res: Response) => {});
 
-});
-*/
-
-// Create a user
+/**
+ * POST /api/user/
+ * create new user
+ */
 userRouter.post("/", (req: Request, res: Response) => {
   var args = {
     email: req.body.email,
@@ -30,26 +29,33 @@ userRouter.post("/", (req: Request, res: Response) => {
     });
 });
 
-// Get a user
+/**
+ * GET /api/user/:userid
+ * get user by id
+ */
 userRouter.get("/:userId", (req: Request, res: Response) => {
   var userId = req.params.userId;
   var user = userController.getUserById(userId);
   res.json(user);
 });
 
-// Update a user
+/**
+ * PUT /api/user/:userid
+ * edit user by id
+ */
 userRouter.post("/:userId", (req: Request, res: Response) => {
   var userId = req.params.userId;
   var attributes = req.body;
   userController.updateUser({ _id: userId }, attributes);
 });
 
-// Delete a user
+/**
+ * DELETE /api/user/:userid
+ * delete user by id
+ */
 userRouter.delete("/:userId", (req: Request, res: Response) => {
   var userId = req.params.userId;
   userController.deleteUserById(userId);
 });
-
-userRouter.use("/:userId/status", statusRouter);
 
 module.exports = userRouter;

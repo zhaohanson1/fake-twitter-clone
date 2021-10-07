@@ -1,8 +1,8 @@
 import { Button, Input, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
-export default function ContentEditableBox(props: any) {
-  const initValue = "";
+export default function EditMenu(props: any) {
+  const initValue = props.initValue;
   const [value, setValue] = useState(initValue);
   const handleChange = (
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
@@ -12,36 +12,49 @@ export default function ContentEditableBox(props: any) {
   const handleSubmit = (event: React.MouseEvent) => {
     event.preventDefault();
     const reqOpt = {
-      method: "POST",
+      method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ content: value }),
     };
 
-    fetch(`/api/user/${props.user}/status`, reqOpt)
+    fetch(`/api/status/${props.statusId}`, reqOpt)
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          alert("pass");
-          setValue(initValue);
+          props.setFetched(false);
+          props.setEditable(false);
         } else {
-          alert("fail");
+          alert("Fail");
         }
       });
+  };
+
+  const handleClose = (e: React.MouseEvent) => {
+    props.setEditable(false);
   };
   return (
     <form>
       <Input
+        autoFocus
         id="status-field"
-        placeholder={"What's happening?"}
         onChange={(e) => handleChange(e)}
+        value={value}
       />
       <Button
-        size="medium"
+        size="small"
         onClick={(e) => {
           handleSubmit(e);
         }}
       >
         Submit
+      </Button>
+      <Button
+        size="small"
+        onClick={(e) => {
+          handleClose(e);
+        }}
+      >
+        Cancel
       </Button>
     </form>
   );
