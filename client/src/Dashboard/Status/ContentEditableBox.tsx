@@ -9,8 +9,8 @@ export default function ContentEditableBox(props: any) {
   ) => {
     setValue(event.target.value);
   };
-  const handleSubmit = (event: React.MouseEvent) => {
-    event.preventDefault();
+
+  const sendPost = () => {
     const reqOpt = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -30,19 +30,28 @@ export default function ContentEditableBox(props: any) {
         }
       });
   };
+  const handleSubmit = (event: React.MouseEvent) => {
+    event.preventDefault();
+    sendPost();
+  };
+
+  const handlekeyPress = (event: React.KeyboardEvent) => {
+    if (event.key == "Enter") {
+      event.preventDefault();
+      sendPost();
+    }
+  };
   return (
     <form>
       <Input
         id="status-field"
         placeholder={"What's happening?"}
-        onChange={(e) => handleChange(e)}
+        onChange={handleChange}
+        onKeyDown={handlekeyPress}
+        autoComplete="off"
+        value={value}
       />
-      <Button
-        size="medium"
-        onClick={(e) => {
-          handleSubmit(e);
-        }}
-      >
+      <Button size="medium" onClick={handleSubmit}>
         Submit
       </Button>
     </form>

@@ -131,11 +131,11 @@ module.exports = {
     /* READ */
     readStatus: readStatus,
     /**
-     * Get all statuses from all users (excluding deleted)
+     * Get all statuses from all users from latest to earliest(excluding deleted)
      * @returns
      */
     getAllStatuses: function () {
-        return readStatus({ deleted: false });
+        return status_1.Status.find({ deleted: false }).sort({ creationDate: 'desc' }).exec();
     },
     /**
      * Get all non-deleted statuses of a user
@@ -260,7 +260,7 @@ module.exports = {
     removeStatus: function (statusId) { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, status_1.Status.findByIdAndDelete(statusId)
+                case 0: return [4 /*yield*/, status_1.Status.findByIdAndDelete(Object(statusId))
                         .exec()
                         .then(function (status) {
                         var user = status.user;

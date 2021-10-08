@@ -86,11 +86,11 @@ module.exports = {
   readStatus: readStatus,
 
   /**
-   * Get all statuses from all users (excluding deleted)
+   * Get all statuses from all users from latest to earliest(excluding deleted)
    * @returns
    */
   getAllStatuses: () => {
-    return readStatus({ deleted: false });
+    return Status.find({ deleted: false }).sort({creationDate: 'desc'}).exec();
   },
 
   /**
@@ -197,7 +197,7 @@ module.exports = {
    * @returns Status
    */
   removeStatus: async (statusId: string) => {
-    return await Status.findByIdAndDelete(statusId)
+    return await Status.findByIdAndDelete(Object(statusId))
       .exec()
       .then((status: typeof Status) => {
         var user = status.user;

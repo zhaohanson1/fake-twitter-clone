@@ -1,5 +1,6 @@
-import { Grid } from "@mui/material";
+import { Divider, Grid, List, ListItem } from "@mui/material";
 import clsx from "clsx";
+import React from "react";
 import { useState, useEffect } from "react";
 import ContentEditableBox from "./Status/ContentEditableBox";
 import StatusBox from "./Status/StatusBox";
@@ -34,20 +35,24 @@ export default function DashboardContent(props: any) {
         <ContentEditableBox user={props.user} setFetched={setFetched} />
       </Grid>
       <Grid item xs>
-        {statuses.map((status: any) => {
-          var dateAsString = new Date(status.creationDate).toString();
-
-          return (
-            <div key={status._id}>
-              <StatusBox
-                date={dateAsString}
-                content={status.content}
-                statusId={status._id}
-                setFetched={setFetched}
-              />
-            </div>
-          );
-        })}
+        <List sx={{ bgcolor: "background.paper" }}>
+          {statuses.map((status: any) => {
+            var dateAsString = new Date(status.creationDate).toLocaleString();
+            return (
+              <React.Fragment key={status._id}>
+                <ListItem>
+                  <StatusBox
+                    date={dateAsString}
+                    content={status.content}
+                    statusId={status._id}
+                    setFetched={setFetched}
+                  />
+                </ListItem>
+                <Divider component="li" />
+              </React.Fragment>
+            );
+          })}
+        </List>
       </Grid>
     </Grid>
   );
