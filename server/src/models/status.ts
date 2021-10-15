@@ -8,6 +8,8 @@ var StatusSchema = new Schema({
   user: { type: Schema.Types.ObjectId, required: true },
   comments: [Schema.Types.ObjectId],
   likes: [Schema.Types.ObjectId],
+  numberOfLikes: { type: Number, default: 0 },
+  numberOfComments: { type: Number, default: 0 },
   creationDate: {
     type: Date,
     required: true,
@@ -22,8 +24,8 @@ var StatusSchema = new Schema({
   },
   deleted: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 });
 
 export var Status = mongoose.model("StatusModel", StatusSchema);

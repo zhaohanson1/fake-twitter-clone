@@ -37,14 +37,11 @@ export default function DashboardContent(props: any) {
       <Grid item xs>
         <List sx={{ bgcolor: "background.paper" }}>
           {statuses.map((status: any) => {
-            var dateAsString = new Date(status.creationDate).toLocaleString();
             return (
               <React.Fragment key={status._id}>
                 <ListItem>
                   <StatusBox
-                    date={dateAsString}
-                    content={status.content}
-                    statusId={status._id}
+                    status={status}
                     setFetched={setFetched}
                   />
                 </ListItem>

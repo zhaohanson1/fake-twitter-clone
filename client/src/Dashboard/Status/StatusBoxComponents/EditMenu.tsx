@@ -3,9 +3,9 @@ import React, { useState } from "react";
 
 export default function EditMenu(props: any) {
   const { setFetched, setEditable } = props;
-  const initValue = props.initValue;
+  const { content, statusId } = props;
 
-  const [value, setValue] = useState(initValue);
+  const [value, setValue] = useState(content);
   const handleChange = (
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
@@ -19,7 +19,7 @@ export default function EditMenu(props: any) {
       body: JSON.stringify({ content: value }),
     };
 
-    fetch(`/api/status/${props.statusId}`, reqOpt)
+    fetch(`/api/status/${statusId}`, reqOpt)
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
@@ -31,7 +31,7 @@ export default function EditMenu(props: any) {
       });
   };
 
-  const handleClose = (e: React.MouseEvent) => {
+  const handleClose = (_e: React.MouseEvent) => {
     setEditable(false);
   };
   return (

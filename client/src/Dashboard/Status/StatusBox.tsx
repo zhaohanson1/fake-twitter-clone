@@ -4,8 +4,8 @@ import StatusAvatarBox from "./StatusBoxComponents/StatusAvatarBox";
 import StatusHeader from "./StatusBoxComponents/StatusHeader";
 import StatusContent from "./StatusBoxComponents/StatusContent";
 
-export default function StatusBoxTemplate(props: any) {
-  const { date, content, statusId } = props;
+export default function StatusBox(props: any) {
+  const { status } = props;
   const { setFetched } = props;
   return (
     <div style={{ width: "100%" }}>
@@ -29,9 +29,7 @@ export default function StatusBoxTemplate(props: any) {
           >
             <StatusAvatarBox />
             <StatusContent
-              date={date}
-              content={content}
-              statusId={statusId}
+              status={status}
               setFetched={setFetched}
             />
           </Box>
