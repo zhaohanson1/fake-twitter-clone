@@ -6,8 +6,8 @@ import { useState } from "react";
 
 export default function MenuButton(props: any) {
   const [anchorEl, setAnchorEl] = useState(null);
-  const { setEditable, setFetched } = props;
-  const statusId = props.statusId;
+  const { statusId, setEditable, setFetched } = props;
+  
   const open = Boolean(anchorEl);
   const handleDelete = (event: React.MouseEvent) => {
     if (statusId === undefined) {
@@ -26,6 +26,7 @@ export default function MenuButton(props: any) {
         if (data.success) {
           setFetched(false);
           setEditable(false);
+          alert("Deleted");
         } else {
           alert("Fail");
         }

@@ -13,6 +13,7 @@ var userController = require("../controllers/userController");
  */
 statusRouter.get("/", async (req: Request, res: Response) => {
   var posts = await statusController.getAllStatuses();
+  //var posts = await statusController.getAllStatusesSimple();
   res.json(posts);
 });
 
@@ -46,14 +47,14 @@ statusRouter.get("/:statusId", (req: Request, res: Response) => {
     .getStatus(statusId)
     .then((status: typeof Status) => {
       if (!status) {
-        res.json({ success: false, content: null });
+        res.json({ success: false, status: null, error: "No status found" });
       } else {
-        res.json({ sucess: true, content: status.content });
+        res.json({ success: true, status: status });
       }
     })
     .catch((err: any) => {
       if (err) {
-        res.json({ success: false, content: null });
+        res.json({ success: false, status: null, error: err.message });
       }
     });
 });
@@ -91,13 +92,11 @@ statusRouter.delete("/:statusId", (req: Request, res: Response) => {
       statusController.removeComment(statusId);
       userController.removeStatusFromUser(statusId);
     }
-    res.json({success: true});
+    res.json({ success: true });
   } catch (err: any) {
     console.error(err);
-    res.json({success: false});
+    res.json({ success: false });
   }
-  
-
 });
 
 /**
@@ -146,5 +145,19 @@ statusRouter.post("/:statusId/unlike", (req: Request, res: Response) => {
     }
   );
 });
+
+/* FUTURE TODO?
+statusRouter.get("/:statusId/likedBy", (req: Request, res: Response) => {
+  try {
+    var postId = req.params.statusId;
+    var likeUserId = req.params.user;
+    var liked = statusController.checkIfLikedByUser(postId, likeUserId);
+    res.json({ success: true, liked: liked });
+  } catch (err: any) {
+    console.error(err);
+    res.json({ success: false, liked: null });
+  }
+});
+*/
 
 module.exports = statusRouter;

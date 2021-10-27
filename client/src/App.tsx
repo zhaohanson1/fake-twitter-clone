@@ -24,6 +24,7 @@ import Home from "./Splash/Home";
 import Login from "./Login/LoginPage";
 import Register from "./Register/RegisterPage";
 import Dashboard from "./Dashboard/DashboardPage";
+import StatusPage from "./Dashboard/Profile/StatusPage";
 
 declare module "@mui/styles/defaultTheme" {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -31,8 +32,6 @@ declare module "@mui/styles/defaultTheme" {
 }
 
 const App = () => {
-  const [user, hasFetched] = useUser();
-
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
@@ -42,6 +41,7 @@ const App = () => {
             <Route path="/login" component={Login} />
             <Route path="/register" component={Register} />
             <Route path="/dashboard" component={Dashboard} />
+            <Route path="/status/:id" component={StatusPage} />
           </Switch>
         </Router>
       </ThemeProvider>

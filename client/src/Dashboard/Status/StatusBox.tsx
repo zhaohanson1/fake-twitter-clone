@@ -5,8 +5,7 @@ import StatusHeader from "./StatusBoxComponents/StatusHeader";
 import StatusContent from "./StatusBoxComponents/StatusContent";
 
 export default function StatusBox(props: any) {
-  const { status } = props;
-  const { setFetched } = props;
+  const { status, setFetched } = props;
   return (
     <div style={{ width: "100%" }}>
       <Box

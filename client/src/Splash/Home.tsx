@@ -16,6 +16,8 @@ import LoginPanel from "../Login/LoginPanel";
 import RegisterPanel from "../Register/RegisterPanel";
 
 import "./css/home.css";
+import { Redirect } from "react-router-dom";
+import useUser from "../CustomHooks/useUser";
 
 
 declare module '@mui/styles/defaultTheme' {
@@ -41,7 +43,10 @@ const theme = createTheme(adaptV4Theme({
   },
 }));
 
-type HomeProps = {};
+type HomeProps = {
+  user: boolean | null,
+  hasFetched: boolean | null;
+};
 type HomeState = {
   accessPanel: string;
 };
@@ -52,13 +57,14 @@ type HomeState = {
  * @class HomePage
  * @extends {React.Component}
  */
-class HomePage extends React.Component<HomeProps, HomeState> {
+class HomePageClass extends React.Component<HomeProps, HomeState> {
   constructor(props: any) {
     super(props);
     this.state = {
       accessPanel: "splash",
     };
     this.changePanel = this.changePanel.bind(this);
+    
   }
 
   changePanel(panel: string) {
@@ -89,6 +95,7 @@ class HomePage extends React.Component<HomeProps, HomeState> {
     return (
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}>
+        {this.props.hasFetched && this.props.user !== null && <Redirect to="/dashboard" />}
           <CssBaseline />
           <Box className="root" bgcolor="secondary.main">
             <Grid container component="main" className="root">
@@ -124,4 +131,9 @@ class HomePage extends React.Component<HomeProps, HomeState> {
   }
 }
 
+const HomePage = () => {
+  const [user, hasFetched] = useUser();
+  return <HomePageClass user={user} hasFetched={hasFetched}/>;
+
+}
 export default HomePage;
