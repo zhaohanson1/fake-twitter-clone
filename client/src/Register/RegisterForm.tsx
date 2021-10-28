@@ -4,6 +4,7 @@ import FormAlertBox from "../FormAlertBox";
 
 const RegisterForm = () => {
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [{ successOpen, successMsg }, setSuccessOpen] = React.useState({
@@ -24,6 +25,7 @@ const RegisterForm = () => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        name: name,
         username: username,
         email: email,
         password: password,
@@ -82,6 +84,18 @@ const RegisterForm = () => {
               autoComplete="email"
               autoFocus
               onChange={(e) => setEmail(e.target.value)}
+            />
+          </Grid>
+          <Grid item>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="name"
+              label="Name"
+              name="Name"
+              onChange={(e) => setName(e.target.value)}
             />
           </Grid>
           <Grid item>

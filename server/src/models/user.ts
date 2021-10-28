@@ -8,7 +8,7 @@ var regEmail =
 
 var UserSchema = new Schema({
   _id: { type: mongoose.Schema.Types.ObjectId, auto: true },
-  name: { type: String },
+  name: { type: String, maxLength: 256 },
   email: {
     type: String,
     unique: [true, "Email has already been used."],

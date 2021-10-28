@@ -225,7 +225,6 @@ describe("Status", () => {
   });
 });
 
-
 describe("Status controller", () => {
   beforeEach(async () => {
     if (process.env.NODE_ENV != "test") {
@@ -449,6 +448,30 @@ describe("Status controller", () => {
           likes: ObjectId(user2.id),
         });
         expect(like.length).to.be.equal(0);
+      });
+    });
+
+    describe("Check if user liked status", async () => {
+      it("returns true if user liked status", async () => {
+        await statusController.addLike(status.id, user1.id);
+        var liked = statusController.getStatusLikedByUser(status.id, user1.id);
+        expect(liked).to.be.true;
+      });
+
+      it("returns false if user has not liked status", () => {
+        var liked = statusController.getStatusLikedByUser(status.id, user1.id);
+        expect(liked).to.be.false;
+      });
+
+      it("behaves correctly on toggle", async () => {
+        var liked;
+        liked = statusController.getStatusLikedByUser(status.id, user1.id);
+        expect(liked).to.be.false;
+        await statusController.addLike(status.id, user1.id);
+        liked = statusController.getStatusLikedByUser(status.id, user1.id);
+        expect(liked).to.be.true;
+        await statusController.removeLike(status.id, user1.id);
+        expect(liked).to.be.false;
       });
     });
   });

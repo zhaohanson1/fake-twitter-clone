@@ -29,6 +29,7 @@ export async function updateStatus(
 var addCommentToStatus = async (statusId: string, commentId: string) => {
   return Status.findByIdAndUpdate(statusId, {
     $addToSet: { comments: { _id: commentId } },
+    //$inc: { numberOfComments: 1 },
   }).exec();
 };
 
@@ -43,7 +44,7 @@ module.exports = {
    * @returns Boolean: true if sucess
    */
   addStatus: (userId: string, content: string) => {
-    console.log(userId)
+    console.log(userId);
     return createStatus({
       user: userId,
       content: content,
@@ -90,8 +91,19 @@ module.exports = {
    * @returns
    */
   getAllStatuses: () => {
-    return Status.find({ deleted: false }).sort({creationDate: 'desc'}).exec();
+    return Status.find({ deleted: false })
+      .sort({ creationDate: "desc" })
+      .exec();
   },
+
+  /* FUTURE TODO
+  getAllStatusesSimple: () => {
+    return Status.find({ deleted: false })
+      .select({ comments: 0, likes: 0 })
+      .sort({ creationDate: "desc" })
+      .exec();
+  },
+  */
 
   /**
    * Get all non-deleted statuses of a user
@@ -125,9 +137,21 @@ module.exports = {
    * @returns
    */
   getComments: (statusId: string) => {
-    var comments = readStatus({ _id: statusId }).comments;
+    var comments = readStatus({ _id: ObjectId(statusId) }).comments;
     return comments;
   },
+
+  /**
+   * TODO: error if user not found?
+   * @param statusId 
+   * @param userId 
+   * @returns Boolean
+   */
+  getStatusLikedByUser: async (statusId: string, userId: string) => {
+    var liked = await Status.find({_id: ObjectId(statusId), likes: {$in: [ObjectId(userId)]}});
+    return liked.length > 0;
+  },
+  
 
   /** Update */
   updateStatus: updateStatus,
@@ -140,7 +164,11 @@ module.exports = {
    */
   editStatus: async (statusId: string, content: string) => {
     console.log(statusId);
-    return await updateStatus({ _id: ObjectId(statusId) }, { content: content }, true);
+    return await updateStatus(
+      { _id: ObjectId(statusId) },
+      { content: content },
+      true
+    );
   },
 
   /**
@@ -151,6 +179,7 @@ module.exports = {
   addLike: async (statusId: string, likeUserId: string) => {
     return await Status.findByIdAndUpdate(statusId, {
       $addToSet: { likes: ObjectId(likeUserId) },
+      $inc: { numberOfLikes: 1 },
     })
       .exec()
       .catch((err: any) => {
@@ -166,6 +195,7 @@ module.exports = {
   removeLike: async (statusId: string, likeUserId: string) => {
     return await Status.findByIdAndUpdate(statusId, {
       $pull: { likes: ObjectId(likeUserId) },
+      $inc: { numberOfLikes: -1 },
     })
       .exec()
       .catch((err: any) => {
@@ -210,7 +240,7 @@ module.exports = {
   },
 
   /**
-   * Remove a comment from status. Returns the status if found. Wrapper for removeStatus.
+   * Remove a comment from status. Returns the status if found.
    * @param statusId
    * @returns Status
    */
@@ -219,4 +249,26 @@ module.exports = {
       throw err;
     });
   },
+  /* FUTURE TODO
+  Remove comment: 
+    find the comment object
+    remove comment from user's statuses list
+    remove comment from parent status
+    delete comment
+  {
+    return await Status.findById(Object(statusId))
+      .then((status: typeof Status) => {
+        userController.removeStatusFromUser(status.user.id, status.id);
+        return Status.findByIdAndUpdate(status.parent, {
+          $pull: { comments: ObjectId(statusId) },
+          $inc: { numberOfComments: -1 },
+        }).exec();
+      })
+      .then((_status: any) => {
+        return Status.findByIdAndDelete(Object(statusId)).exec();
+      })
+      .catch((err: any) => {
+        throw err;
+      });
+  },*/
 };

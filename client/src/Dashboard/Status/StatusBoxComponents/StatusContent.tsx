@@ -9,12 +9,11 @@ import MenuButton from "./StatusButtons/MenuButton";
 
 export default function StatusContent(props: any) {
   const [editable, setEditable] = useState(false);
-  var { status, setFetched } = props;
+  var { user, status, setFetched } = props;
 
   return (
     <Box sx={{ p: 1, border: "1px black solid", width: "100%" }}>
       <Box sx={{ p: 1, border: "1px black solid", display: "flex" }}>
-        _Username Tags
         <Box sx={{ p: 1, border: "1px black solid", width: "auto" }}>Name</Box>
         <Box sx={{ p: 1, border: "1px black solid", width: "auto" }}>
           @{status.user}
@@ -22,7 +21,7 @@ export default function StatusContent(props: any) {
         <Box sx={{ p: 1, border: "1px black solid", width: "auto" }}>
           {new Date(status.creationDate).toLocaleString()}
         </Box>
-        {setFetched && (
+        {user == status.user && setFetched && (
           <MenuButton
             statusId={status._id}
             setEditable={setEditable}
@@ -47,7 +46,7 @@ export default function StatusContent(props: any) {
         <Box sx={{ display: "flex", justifyContent: "space-around" }}>
           <CommentButton />
           <RetweetButton />
-          <LikeButton status={status} />
+          <LikeButton status={status} user={user} />
           <ShareButton />
         </Box>
       </Box>

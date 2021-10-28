@@ -6,14 +6,14 @@ import ContentEditableBox from "./Status/ContentEditableBox";
 import StatusBox from "./Status/StatusBox";
 
 export default function DashboardContent(props: any) {
-  const classes = props.classes;
+  const {user, classes} = props;
   const [statuses, setStatuses] = useState([]);
   const [fetched, setFetched] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
-
-    if (props.user) {
+    
+    if (user) {
       fetch(`/api/status`, { method: "GET" })
         .then((res) => res.json())
         .then((result) => {
@@ -27,7 +27,7 @@ export default function DashboardContent(props: any) {
     return () => {
       isMounted = false;
     };
-  }, [props.user, fetched]);
+  }, [user, fetched]);
 
   return (
     <Grid item container direction="column" xs spacing={1}>
@@ -42,6 +42,7 @@ export default function DashboardContent(props: any) {
                 <ListItem>
                   <StatusBox
                     status={status}
+                    user={user}
                     setFetched={setFetched}
                   />
                 </ListItem>

@@ -100,64 +100,93 @@ statusRouter.delete("/:statusId", (req: Request, res: Response) => {
 });
 
 /**
- * PUT /api/status/:statusId/like
+ * PATCH /api/status/:statusId/like
  *
  */
-statusRouter.post("/:statusId/like", (req: Request, res: Response) => {
+statusRouter.patch("/:statusId/like", (req: Request, res: Response) => {
   var statusId = req.params.statusId;
-  var likeUserId = req.params.user;
-
-  statusController.addLike(
-    statusId,
-    likeUserId,
-    (err: any, status: typeof Status) => {
-      if (err) {
-        res.json({ success: false });
+  var userId = req.body.user;
+  if (!userId) {
+    res.json({ success: false });
+    return;
+  }
+  statusController
+    .getStatusLikedByUser(statusId, userId)
+    .then((liked: boolean) => {
+      if (liked) {
+        throw new Error("Already liked");
       }
-      if (!status) {
-        res.json({ success: false });
+    })
+    .then(() => {
+      return statusController.addLike(statusId, userId);
+    })
+    .then((status: typeof Status) => {
+      if (status) {
+        res.json({ success: true });
       } else {
-        res.json({ sucess: true });
+        res.json({ success: false });
       }
-    }
-  );
+    })
+    .catch((err: any) => {
+      console.error(err);
+      res.json({ success: false });
+    });
 });
 
 /**
- * PUT /api/status/:statusId/unlike
+ * PATCH /api/status/:statusId/unlike
  *
  */
-statusRouter.post("/:statusId/unlike", (req: Request, res: Response) => {
-  var postId = req.params.statusId;
-  var likeUserId = req.params.user;
-  statusController.removeLike(
-    postId,
-    likeUserId,
-    (err: any, status: typeof Status) => {
-      if (err) {
-        res.json({ success: false });
+statusRouter.patch("/:statusId/unlike", (req: Request, res: Response) => {
+  var statusId = req.params.statusId;
+  var userId = req.body.user;
+  if (!userId) {
+    res.json({ success: false });
+    return;
+  }
+
+  statusController
+    .getStatusLikedByUser(statusId, userId)
+    .then((liked: boolean) => {
+      if (!liked) {
+        throw new Error("Already not liked");
       }
-      if (!status) {
-        res.json({ success: false });
+    })
+    .then(() => {
+      return statusController.removeLike(statusId, userId);
+    })
+    .then((status: typeof Status) => {
+      if (status) {
+        res.json({ success: true });
       } else {
-        res.json({ sucess: true });
+        res.json({ success: false });
       }
-    }
-  );
+    })
+    .catch((err: any) => {
+      console.error(err);
+      res.json({ success: false });
+    });
 });
 
-/* FUTURE TODO?
-statusRouter.get("/:statusId/likedBy", (req: Request, res: Response) => {
-  try {
-    var postId = req.params.statusId;
-    var likeUserId = req.params.user;
-    var liked = statusController.checkIfLikedByUser(postId, likeUserId);
-    res.json({ success: true, liked: liked });
-  } catch (err: any) {
-    console.error(err);
-    res.json({ success: false, liked: null });
+/**
+ * GET /api/status/:statusId/likedBy/:userId
+ */
+statusRouter.get(
+  "/:statusId/likedBy/:userId",
+  (req: Request, res: Response) => {
+    var statusId = req.params.statusId;
+    var userId = req.params.userId;
+    statusController
+      .getStatusLikedByUser(statusId, userId)
+      .then((liked: boolean) => {
+        console.log(liked);
+        res.json({ success: true, liked: liked });
+      })
+      .catch((err: any) => {
+        console.error(err);
+        res.json({ success: false, liked: null });
+      });
   }
-});
-*/
+);
 
 module.exports = statusRouter;

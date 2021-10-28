@@ -17,6 +17,7 @@ import StatusBox from "../Status/StatusBox";
 import DashboardNav from "../DashboardNav";
 import DashboardHeader from "../DashboardHeader";
 import DashboardWidget from "../DashboardWidget";
+import useUser from "../../CustomHooks/useUser";
 
 type StatusParams = {
   id: string;
@@ -39,6 +40,7 @@ export default function StatusPage() {
   const { id } = useParams<StatusParams>();
   const [classes, _setClasses] = useState(useStyles());
   const [status, setStatus] = useState<object>({});
+  const [user, hasFetched] = useUser();
   useEffect(() => {
     const reqOpt = {
       method: "GET",
@@ -65,7 +67,7 @@ export default function StatusPage() {
           <Grid item container direction="column" xs spacing={1}>
             <Grid item xs>
               {Object.keys(status).length > 0 && (
-                <StatusBox status={status} setFetched={null} />
+                <StatusBox status={status} user={user} setFetched={null} />
               )}
             </Grid>
           </Grid>
