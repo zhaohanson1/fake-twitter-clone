@@ -1,7 +1,7 @@
 import { Button, Input, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
-export default function ContentEditableBox(props: any) {
+export default function EditBox(props: any) {
   const initValue = "";
   const [value, setValue] = useState(initValue);
   const handleChange = (

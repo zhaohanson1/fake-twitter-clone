@@ -1,8 +1,8 @@
 import { Box, Container, IconButton, Menu, MenuItem } from "@mui/material";
 
-import StatusAvatarBox from "./StatusBoxComponents/StatusAvatarBox";
-import StatusHeader from "./StatusBoxComponents/StatusHeader";
-import StatusContent from "./StatusBoxComponents/StatusContent";
+import StatusAvatar from "./StatusAvatar";
+import StatusHeader from "./StatusHeader";
+import StatusContent from "./StatusContent";
 
 export default function StatusBox(props: any) {
   const { status, user, setFetched } = props;
@@ -26,7 +26,7 @@ export default function StatusBox(props: any) {
               width: "auto",
             }}
           >
-            <StatusAvatarBox />
+            <StatusAvatar />
             <StatusContent
               status={status}
               user={user}

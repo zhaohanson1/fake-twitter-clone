@@ -2,17 +2,17 @@ import { Divider, Grid, List, ListItem } from "@mui/material";
 import clsx from "clsx";
 import React from "react";
 import { useState, useEffect } from "react";
-import ContentEditableBox from "./Status/ContentEditableBox";
-import StatusBox from "./Status/StatusBox";
+import EditBox from "../Status/EditBox";
+import StatusBox from "../Status/Status";
 
 export default function DashboardContent(props: any) {
-  const {user, classes} = props;
+  const { user, classes } = props;
   const [statuses, setStatuses] = useState([]);
   const [fetched, setFetched] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
-    
+
     if (user) {
       fetch(`/api/status`, { method: "GET" })
         .then((res) => res.json())
@@ -32,7 +32,7 @@ export default function DashboardContent(props: any) {
   return (
     <Grid item container direction="column" xs spacing={1}>
       <Grid item xs>
-        <ContentEditableBox user={props.user} setFetched={setFetched} />
+        <EditBox user={user} setFetched={setFetched} />
       </Grid>
       <Grid item xs>
         <List sx={{ bgcolor: "background.paper" }}>

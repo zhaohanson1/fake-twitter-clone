@@ -12,9 +12,9 @@ const theme = createTheme();
 import Grid from "@mui/material/Grid";
 
 import DashboardHeader from "./DashboardHeader";
-import DashboardNav from "./DashboardNav";
+import NavPanel from "../NavPanel/NavPanel";
 import DashboardContent from "./DashboardContent";
-import DashboardWidget from "./DashboardWidget";
+import WidgetPanel from "../WidgetPanel/WidgetPanel";
 import { Redirect } from "react-router";
 import useUser from "../CustomHooks/useUser";
 
@@ -42,9 +42,9 @@ export default function Dashboard() {
         {hasFetched && user === null && <Redirect to="/login" />}
         <DashboardHeader />
         <Grid container direction="row" spacing={1}>
-          <DashboardNav classes={classes} />
+          <NavPanel classes={classes} />
           <DashboardContent classes={classes} user={user}/>
-          <DashboardWidget classes={classes} />
+          <WidgetPanel classes={classes} />
         </Grid>
       </ThemeProvider>
     </StyledEngineProvider>

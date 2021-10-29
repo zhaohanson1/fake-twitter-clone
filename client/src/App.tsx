@@ -20,11 +20,11 @@ const useStyles = makeStyles((theme) => {
   }
 });
 
-import Home from "./Splash/Home";
+import Splash from "./Splash/SplashPage";
 import Login from "./Login/LoginPage";
 import Register from "./Register/RegisterPage";
 import Dashboard from "./Dashboard/DashboardPage";
-import StatusPage from "./Dashboard/Profile/StatusPage";
+import StatusPage from "./Status/StatusPage";
 
 declare module "@mui/styles/defaultTheme" {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -37,7 +37,7 @@ const App = () => {
       <ThemeProvider theme={theme}>
         <Router>
           <Switch>
-            <Route exact path="/" component={Home} />
+            <Route exact path="/" component={Splash} />
             <Route path="/login" component={Login} />
             <Route path="/register" component={Register} />
             <Route path="/dashboard" component={Dashboard} />

@@ -13,11 +13,11 @@ import makeStyles from "@mui/styles/makeStyles";
 const theme = createTheme();
 
 import Grid from "@mui/material/Grid";
-import StatusBox from "../Status/StatusBox";
-import DashboardNav from "../DashboardNav";
-import DashboardHeader from "../DashboardHeader";
-import DashboardWidget from "../DashboardWidget";
-import useUser from "../../CustomHooks/useUser";
+import StatusBox from "./Status";
+import NavPanel from "../NavPanel/NavPanel";
+
+import WidgetPanel from "../WidgetPanel/WidgetPanel";
+import useUser from "../CustomHooks/useUser";
 
 type StatusParams = {
   id: string;
@@ -61,9 +61,8 @@ export default function StatusPage() {
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
-        <DashboardHeader />
         <Grid container direction="row" spacing={1}>
-          <DashboardNav classes={classes} />
+          <NavPanel classes={classes} />
           <Grid item container direction="column" xs spacing={1}>
             <Grid item xs>
               {Object.keys(status).length > 0 && (
@@ -71,7 +70,7 @@ export default function StatusPage() {
               )}
             </Grid>
           </Grid>
-          <DashboardWidget classes={classes} />
+          <WidgetPanel classes={classes} />
         </Grid>
       </ThemeProvider>
     </StyledEngineProvider>
