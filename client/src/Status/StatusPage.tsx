@@ -58,6 +58,11 @@ export default function StatusPage() {
       });
   }, []);
 
+  function forceUpdate() {
+    return;
+  }
+
+  
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
@@ -66,7 +71,7 @@ export default function StatusPage() {
           <Grid item container direction="column" xs spacing={1}>
             <Grid item xs>
               {Object.keys(status).length > 0 && (
-                <StatusBox status={status} user={user} setFetched={null} />
+                <StatusBox status={status} user={user} forceUpdate={forceUpdate} />
               )}
             </Grid>
           </Grid>

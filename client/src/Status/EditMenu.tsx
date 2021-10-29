@@ -2,15 +2,16 @@ import { Button, Input } from "@mui/material";
 import React, { useState } from "react";
 
 export default function EditMenu(props: any) {
-  const { setFetched, setEditable } = props;
+  const { setEditable, forceUpdate } = props;
   const { content, statusId } = props;
-
   const [value, setValue] = useState(content);
+
   const handleChange = (
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
     setValue(event.target.value);
   };
+
   const handleSubmit = (event: React.MouseEvent) => {
     event.preventDefault();
     const reqOpt = {
@@ -23,8 +24,8 @@ export default function EditMenu(props: any) {
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          setFetched(false);
           setEditable(false);
+          forceUpdate();
         } else {
           alert("Fail");
         }
@@ -34,6 +35,7 @@ export default function EditMenu(props: any) {
   const handleClose = (_e: React.MouseEvent) => {
     setEditable(false);
   };
+  
   return (
     <form>
       <Input

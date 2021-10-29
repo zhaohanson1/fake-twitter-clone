@@ -1,7 +1,8 @@
 import { Button, Input, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
-export default function EditBox(props: any) {
+export default function CreateStatusBox(props: any) {
+  const { user, forceUpdate } = props;
   const initValue = "";
   const [value, setValue] = useState(initValue);
   const handleChange = (
@@ -14,17 +15,17 @@ export default function EditBox(props: any) {
     const reqOpt = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: props.user, content: value }),
+      body: JSON.stringify({ userId: user, content: value }),
     };
-    console.log(props.user);
+    console.log(user);
 
     fetch(`/api/status`, reqOpt)
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          alert("pass");
           setValue(initValue);
-          props.setFetched(false);
+          forceUpdate();
+          alert("pass");
         } else {
           alert("fail");
         }

@@ -2,13 +2,17 @@ import { Divider, Grid, List, ListItem } from "@mui/material";
 import clsx from "clsx";
 import React from "react";
 import { useState, useEffect } from "react";
-import EditBox from "../Status/EditBox";
+import CreateStatusBox from "../Status/CreateStatusBox";
 import StatusBox from "../Status/Status";
 
 export default function DashboardContent(props: any) {
   const { user, classes } = props;
   const [statuses, setStatuses] = useState([]);
-  const [fetched, setFetched] = useState(false);
+  const [fetched, setStatusFetched] = useState(false);
+
+  function forceUpdate() {
+    setStatusFetched(false);
+  }
 
   useEffect(() => {
     let isMounted = true;
@@ -19,7 +23,7 @@ export default function DashboardContent(props: any) {
         .then((result) => {
           if (isMounted) {
             setStatuses(result);
-            setFetched(true);
+            setStatusFetched(true);
           }
         });
     }
@@ -32,18 +36,18 @@ export default function DashboardContent(props: any) {
   return (
     <Grid item container direction="column" xs spacing={1}>
       <Grid item xs>
-        <EditBox user={user} setFetched={setFetched} />
+        <CreateStatusBox user={user} forceUpdate={forceUpdate} />
       </Grid>
       <Grid item xs>
         <List sx={{ bgcolor: "background.paper" }}>
-          {statuses.map((status: any) => {
+          {statuses.map((status: any, index: number) => {
             return (
-              <React.Fragment key={status._id}>
+              <React.Fragment key={index}>
                 <ListItem>
                   <StatusBox
                     status={status}
                     user={user}
-                    setFetched={setFetched}
+                    forceUpdate={forceUpdate}
                   />
                 </ListItem>
                 <Divider component="li" />

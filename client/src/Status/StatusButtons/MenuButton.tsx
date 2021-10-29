@@ -1,13 +1,13 @@
 import { Box, IconButton, Menu, MenuItem } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
+import MenuIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useState } from "react";
 
 export default function MenuButton(props: any) {
   const [anchorEl, setAnchorEl] = useState(null);
-  const { statusId, setEditable, setFetched } = props;
-  
+  const { statusId, setEditable, forceUpdate } = props;
+
   const open = Boolean(anchorEl);
   const handleDelete = (event: React.MouseEvent) => {
     if (statusId === undefined) {
@@ -24,8 +24,8 @@ export default function MenuButton(props: any) {
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          setFetched(false);
           setEditable(false);
+          forceUpdate();
           alert("Deleted");
         } else {
           alert("Fail");
@@ -66,10 +66,12 @@ export default function MenuButton(props: any) {
         }}
       >
         <MenuItem onClick={handleEdit}>
-          Edit <EditIcon />
+          <EditIcon />
+          Edit
         </MenuItem>
         <MenuItem onClick={handleDelete}>
-          Delete <DeleteIcon color="warning" />
+          <DeleteIcon color="warning" />
+          Delete
         </MenuItem>
       </Menu>
     </Box>

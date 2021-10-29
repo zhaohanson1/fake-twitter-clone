@@ -34,16 +34,16 @@ const useStyles = makeStyles((_theme) => ({
 export default function Dashboard() {
   const [classes, _setClasses] = useState(useStyles());
 
-  const [user, hasFetched] = useUser();
-  
+  const [user, userFetched] = useUser();
+
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
-        {hasFetched && user === null && <Redirect to="/login" />}
+        {userFetched && user === null && <Redirect to="/login" />}
         <DashboardHeader />
         <Grid container direction="row" spacing={1}>
           <NavPanel classes={classes} />
-          <DashboardContent classes={classes} user={user}/>
+          <DashboardContent classes={classes} user={user} />
           <WidgetPanel classes={classes} />
         </Grid>
       </ThemeProvider>

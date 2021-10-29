@@ -8,46 +8,44 @@ import ShareButton from "./StatusButtons/ShareButton";
 import MenuButton from "./StatusButtons/MenuButton";
 
 export default function StatusContent(props: any) {
+  var { user, status, forceUpdate } = props;
   const [editable, setEditable] = useState(false);
-  var { user, status, setFetched } = props;
+  const b = { p: 1, border: "1px black solid" };
 
   return (
-    <Box sx={{ p: 1, border: "1px black solid", width: "100%" }}>
-      <Box sx={{ p: 1, border: "1px black solid", display: "flex" }}>
-        <Box sx={{ p: 1, border: "1px black solid", width: "auto" }}>Name</Box>
-        <Box sx={{ p: 1, border: "1px black solid", width: "auto" }}>
-          @{status.user}
-        </Box>
-        <Box sx={{ p: 1, border: "1px black solid", width: "auto" }}>
+    <Box>
+      <Box sx={{ p: 1, display: "flex" }}>
+        <Box sx={{ p: 1, width: "auto" }}>Name</Box>
+        <Box sx={{ p: 1, width: "auto" }}>@{status.user}</Box>
+        <Box sx={{ p: 1,  width: "auto" }}>
           {new Date(status.creationDate).toLocaleString()}
         </Box>
-        {user == status.user && setFetched && (
+        {user == status.user && (
           <MenuButton
             statusId={status._id}
             setEditable={setEditable}
-            setFetched={setFetched}
+            forceUpdate={forceUpdate}
           />
         )}
       </Box>
-      <Box sx={{ border: "1px black solid" }}>
-        <Box sx={{ p: 1, border: "1px black solid" }}>
+      <Box sx={{}}>
+        <Box sx={{ p: 1 }}>
           {editable ? (
             <EditMenu
-              content={status.content}
               statusId={status._id}
               setEditable={setEditable}
-              setFetched={setFetched}
+              forceUpdate={forceUpdate}
             />
           ) : (
-            status.content + " " + status._id
+            status.content
           )}
         </Box>
-        <Box sx={{ p: 1, border: "1px black solid" }}>Media</Box>
-        <Box sx={{ display: "flex", justifyContent: "space-around" }}>
+        <Box sx={{ p: 1 }}>{status._id}</Box>
+        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <CommentButton />
           <RetweetButton />
           <LikeButton status={status} user={user} />
-          <ShareButton />
+          <ShareButton statusId={status._id} />
         </Box>
       </Box>
     </Box>

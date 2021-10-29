@@ -1,11 +1,14 @@
-import { Box, Container, IconButton, Menu, MenuItem } from "@mui/material";
+import {
+  Box,
+  Card,
+} from "@mui/material";
 
 import StatusAvatar from "./StatusAvatar";
 import StatusHeader from "./StatusHeader";
 import StatusContent from "./StatusContent";
 
 export default function StatusBox(props: any) {
-  const { status, user, setFetched } = props;
+  const { status, user, forceUpdate } = props;
   return (
     <div style={{ width: "100%" }}>
       <Box
@@ -13,10 +16,9 @@ export default function StatusBox(props: any) {
           display: "flex",
           p: 1,
           bgcolor: "gray.00",
-          border: "1px black solid",
         }}
       >
-        <Box sx={{ p: 1, border: "1px black solid", width: "100%" }}>
+        <Card variant="outlined">
           <StatusHeader />
           <Box
             sx={{
@@ -30,10 +32,10 @@ export default function StatusBox(props: any) {
             <StatusContent
               status={status}
               user={user}
-              setFetched={setFetched}
+              forceUpdate={forceUpdate}
             />
           </Box>
-        </Box>
+        </Card>
       </Box>
     </div>
   );
