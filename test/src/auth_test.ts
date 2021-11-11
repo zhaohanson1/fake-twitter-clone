@@ -40,7 +40,7 @@ describe("Auth", () => {
         .send({ username: "admin", password: "password", email: "foo@bar.com" })
         .then((res: any) => {
           expect(res, res.status).to.have.status(200);
-          expect(res.body["success"], res.body['alert']).to.be.true;
+          expect(res.body["success"], res.body["alert"]).to.be.true;
         })
         .then(async () => {
           var user = await User.findOne({ username: "admin" }).exec();

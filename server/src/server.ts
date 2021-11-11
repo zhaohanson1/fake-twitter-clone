@@ -5,8 +5,7 @@ const bodyParser = require("body-parser");
 const passport = require("passport");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
-const morgan = require('morgan');
-
+const morgan = require("morgan");
 
 const app = express();
 
@@ -17,7 +16,7 @@ async function init() {
   const db = require("./boot/connectDatabase");
   var clientPromise = db();
 
-  app.use(morgan('combined'));
+  app.use(morgan("combined"));
   app.use(express.static("../../public"));
   const oneDay = 1000 * 60 * 60 * 24;
 
@@ -50,7 +49,6 @@ async function init() {
   const apiRouter = require("./api/apiRouter");
 
   const port = process.env.BACKEND_PORT || 3000;
-  
 
   app.get("/api", (_req: any, res: any): void => {
     res.json({ message: "Hello from server!" });

@@ -61,7 +61,7 @@ statusRouter.get("/:statusId", (req: Request, res: Response) => {
 
 /**
  * PUT /api/status/:statusId
- * edit post by id
+ * edit post by id, then return success code and new status
  */
 statusRouter.put("/:statusId", (req: Request, res: Response) => {
   var statusId = req.params.statusId;
@@ -69,7 +69,7 @@ statusRouter.put("/:statusId", (req: Request, res: Response) => {
   statusController
     .editStatus(statusId, content)
     .then((status: typeof Status) => {
-      res.json({ success: true });
+      res.json({ success: true, status: status });
     })
     .catch((err: any) => {
       console.error(err);

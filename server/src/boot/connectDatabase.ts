@@ -27,7 +27,7 @@ module.exports = function () {
 
   //console.log(mongoDB);
   const connected = mongoose.connect(mongoDB, options).catch((err: any) => {
-    console.log("Could not connect")
+    console.log("Could not connect");
     console.log(err.reason);
     process.exit(1);
   });

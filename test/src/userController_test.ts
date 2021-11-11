@@ -1,6 +1,5 @@
 export {};
 
-
 let { User } = require("../../server/dist/models/user");
 let { ready } = require("../../server/dist/server");
 var userController = require("../../server/dist/controllers/userController");

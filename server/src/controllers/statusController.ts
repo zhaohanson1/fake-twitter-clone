@@ -143,15 +143,17 @@ module.exports = {
 
   /**
    * TODO: error if user not found?
-   * @param statusId 
-   * @param userId 
+   * @param statusId
+   * @param userId
    * @returns Boolean
    */
   getStatusLikedByUser: async (statusId: string, userId: string) => {
-    var liked = await Status.find({_id: ObjectId(statusId), likes: {$in: [ObjectId(userId)]}});
+    var liked = await Status.find({
+      _id: ObjectId(statusId),
+      likes: { $in: [ObjectId(userId)] },
+    });
     return liked.length > 0;
   },
-  
 
   /** Update */
   updateStatus: updateStatus,
