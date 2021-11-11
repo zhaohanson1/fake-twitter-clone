@@ -1,14 +1,11 @@
-import {
-  Box,
-  Card,
-} from "@mui/material";
+import { Box, Card } from "@mui/material";
 
 import StatusAvatar from "./StatusAvatar";
 import StatusHeader from "./StatusHeader";
 import StatusContent from "./StatusContent";
 
 export default function StatusBox(props: any) {
-  const { status, user, forceUpdate } = props;
+  const { status, forceUpdate } = props;
   return (
     <div style={{ width: "100%" }}>
       <Box
@@ -29,11 +26,7 @@ export default function StatusBox(props: any) {
             }}
           >
             <StatusAvatar />
-            <StatusContent
-              status={status}
-              user={user}
-              forceUpdate={forceUpdate}
-            />
+            <StatusContent status={status} forceUpdate={forceUpdate} />
           </Box>
         </Card>
       </Box>

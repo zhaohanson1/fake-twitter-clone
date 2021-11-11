@@ -1,8 +1,10 @@
-import { Button, Input, TextField } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import { Button, Input } from "@mui/material";
+import React, { useState } from "react";
+import { useUserContext } from "../Contexts/UserContext";
 
 export default function CreateStatusBox(props: any) {
-  const { user, forceUpdate } = props;
+  const { user } = useUserContext();
+  const { forceUpdate } = props;
   const initValue = "";
   const [value, setValue] = useState(initValue);
   const handleChange = (

@@ -1,10 +1,8 @@
-import { Box, CssBaseline, List } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import {
   ThemeProvider,
-  Theme,
   StyledEngineProvider,
   createTheme,
 } from "@mui/material/styles";
@@ -17,7 +15,6 @@ import StatusBox from "./Status";
 import NavPanel from "../NavPanel/NavPanel";
 
 import WidgetPanel from "../WidgetPanel/WidgetPanel";
-import useUser from "../CustomHooks/useUser";
 
 type StatusParams = {
   id: string;
@@ -40,7 +37,6 @@ export default function StatusPage() {
   const { id } = useParams<StatusParams>();
   const [classes, _setClasses] = useState(useStyles());
   const [status, setStatus] = useState<object>({});
-  const [user, hasFetched] = useUser();
   useEffect(() => {
     const reqOpt = {
       method: "GET",
@@ -62,7 +58,6 @@ export default function StatusPage() {
     return;
   }
 
-  
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
@@ -71,7 +66,7 @@ export default function StatusPage() {
           <Grid item container direction="column" xs spacing={1}>
             <Grid item xs>
               {Object.keys(status).length > 0 && (
-                <StatusBox status={status} user={user} forceUpdate={forceUpdate} />
+                <StatusBox status={status} forceUpdate={forceUpdate} />
               )}
             </Grid>
           </Grid>

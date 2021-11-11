@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 /**
  * A hook that async fetches the current logged in user.
  * When user has been fetched, set boolean to true
- * @returns 
+ * @returns
  * user: the user id of current logged in user
  * fetched: if fetch call has finished
  */
@@ -30,5 +30,5 @@ export default function useUser() {
       isMounted = false;
     };
   }, [user]);
-  return [user, fetched];
+  return [user, fetched] as const;
 }

@@ -1,9 +1,11 @@
 import { Box, IconButton } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import React, { useEffect, useState } from "react";
+import { useUserContext } from "../../Contexts/UserContext";
 
 export default function LikeButton(props: any) {
-  const { status, user } = props;
+  const { user } = useUserContext();
+  const { status } = props;
   const [liked, setLiked] = useState(false);
   const [buttonStyle, setbuttonStyle] = useState({ color: "default" });
   //Hack

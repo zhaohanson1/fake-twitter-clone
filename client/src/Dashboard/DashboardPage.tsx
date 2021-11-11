@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   ThemeProvider,
-  Theme,
   StyledEngineProvider,
   createTheme,
 } from "@mui/material/styles";
@@ -11,12 +10,11 @@ const theme = createTheme();
 
 import Grid from "@mui/material/Grid";
 
-import DashboardHeader from "./DashboardHeader";
 import NavPanel from "../NavPanel/NavPanel";
 import DashboardContent from "./DashboardContent";
 import WidgetPanel from "../WidgetPanel/WidgetPanel";
 import { Redirect } from "react-router";
-import useUser from "../CustomHooks/useUser";
+import { useUserContext } from "../Contexts/UserContext";
 
 const useStyles = makeStyles((_theme) => ({
   container: {
@@ -33,17 +31,15 @@ const useStyles = makeStyles((_theme) => ({
 
 export default function Dashboard() {
   const [classes, _setClasses] = useState(useStyles());
-
-  const [user, userFetched] = useUser();
+  const { user, userFetched } = useUserContext();
 
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
         {userFetched && user === null && <Redirect to="/login" />}
-        <DashboardHeader />
         <Grid container direction="row" spacing={1}>
           <NavPanel classes={classes} />
-          <DashboardContent classes={classes} user={user} />
+          <DashboardContent classes={classes} />
           <WidgetPanel classes={classes} />
         </Grid>
       </ThemeProvider>

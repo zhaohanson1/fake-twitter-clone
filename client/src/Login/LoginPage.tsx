@@ -1,8 +1,7 @@
 import { Box, CssBaseline } from "@mui/material";
-import React from "react";
 import { Redirect } from "react-router-dom";
-import useUser from "../CustomHooks/useUser";
 import LoginForm from "./LoginForm";
+import { useUserContext } from "../Contexts/UserContext";
 
 /**
  * Login page
@@ -11,10 +10,10 @@ import LoginForm from "./LoginForm";
  * @extends {React.Component}
  */
 export default function LoginPage() {
-  const [user, hasFetched] = useUser();
+  const { user, userFetched } = useUserContext();
   return (
     <Box component="main">
-      {hasFetched && user !== null && <Redirect to="/dashboard" />}
+      {userFetched && user !== null && <Redirect to="/dashboard" />}
       <CssBaseline />
       <Box mx="33vw" mt="10vh">
         <LoginForm />

@@ -1,9 +1,4 @@
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Redirect,
-} from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import useUser from "./CustomHooks/useUser";
 import {
   ThemeProvider,
@@ -14,7 +9,7 @@ import {
 import makeStyles from "@mui/styles/makeStyles";
 const theme = createTheme();
 
-const useStyles = makeStyles((theme) => {
+const useStyles = makeStyles((_theme) => {
   root: {
     // some css that access to theme
   }
@@ -25,6 +20,7 @@ import Login from "./Login/LoginPage";
 import Register from "./Register/RegisterPage";
 import Dashboard from "./Dashboard/DashboardPage";
 import StatusPage from "./Status/StatusPage";
+import { UserContext } from "./Contexts/UserContext";
 
 declare module "@mui/styles/defaultTheme" {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -32,18 +28,21 @@ declare module "@mui/styles/defaultTheme" {
 }
 
 const App = () => {
+  const [user, userFetched] = useUser();
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
-        <Router>
-          <Switch>
-            <Route exact path="/" component={Splash} />
-            <Route path="/login" component={Login} />
-            <Route path="/register" component={Register} />
-            <Route path="/dashboard" component={Dashboard} />
-            <Route path="/status/:id" component={StatusPage} />
-          </Switch>
-        </Router>
+        <UserContext.Provider value={{ user, userFetched }}>
+          <Router>
+            <Switch>
+              <Route exact path="/" component={Splash} />
+              <Route path="/login" component={Login} />
+              <Route path="/register" component={Register} />
+              <Route path="/dashboard" component={Dashboard} />
+              <Route path="/status/:id" component={StatusPage} />
+            </Switch>
+          </Router>
+        </UserContext.Provider>
       </ThemeProvider>
     </StyledEngineProvider>
   );

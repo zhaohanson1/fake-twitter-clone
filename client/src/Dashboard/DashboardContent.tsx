@@ -2,11 +2,12 @@ import { Divider, Grid, List, ListItem } from "@mui/material";
 import clsx from "clsx";
 import React from "react";
 import { useState, useEffect } from "react";
+import { useUserContext } from "../Contexts/UserContext";
 import CreateStatusBox from "../Status/CreateStatusBox";
 import StatusBox from "../Status/Status";
 
 export default function DashboardContent(props: any) {
-  const { user, classes } = props;
+  const { user } = useUserContext();
   const [statuses, setStatuses] = useState([]);
   const [fetched, setStatusFetched] = useState(false);
 
@@ -36,7 +37,7 @@ export default function DashboardContent(props: any) {
   return (
     <Grid item container direction="column" xs spacing={1}>
       <Grid item xs>
-        <CreateStatusBox user={user} forceUpdate={forceUpdate} />
+        <CreateStatusBox forceUpdate={forceUpdate} />
       </Grid>
       <Grid item xs>
         <List sx={{ bgcolor: "background.paper" }}>
@@ -44,11 +45,7 @@ export default function DashboardContent(props: any) {
             return (
               <React.Fragment key={index}>
                 <ListItem>
-                  <StatusBox
-                    status={status}
-                    user={user}
-                    forceUpdate={forceUpdate}
-                  />
+                  <StatusBox status={status} forceUpdate={forceUpdate} />
                 </ListItem>
                 <Divider component="li" />
               </React.Fragment>

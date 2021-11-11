@@ -17,38 +17,37 @@ import RegisterPanel from "../Register/RegisterPanel";
 
 import "./css/home.css";
 import { Redirect } from "react-router-dom";
-import useUser from "../CustomHooks/useUser";
+import { UserContext } from "../Contexts/UserContext";
 
-
-declare module '@mui/styles/defaultTheme' {
+declare module "@mui/styles/defaultTheme" {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface DefaultTheme extends Theme {}
 }
 
-
-const theme = createTheme(adaptV4Theme({
-  palette: {
-    primary: {
-      light: "#5472d3",
-      main: "#0d47a1",
-      dark: "#002171",
-      contrastText: "#fff",
+const theme = createTheme(
+  adaptV4Theme({
+    palette: {
+      primary: {
+        light: "#5472d3",
+        main: "#0d47a1",
+        dark: "#002171",
+        contrastText: "#fff",
+      },
+      secondary: {
+        light: "#ffffff",
+        main: "#e8eaf6",
+        dark: "#b6b8c3",
+        contrastText: "#000",
+      },
     },
-    secondary: {
-      light: "#ffffff",
-      main: "#e8eaf6",
-      dark: "#b6b8c3",
-      contrastText: "#000",
-    },
-  },
-}));
+  })
+);
 
-type HomeProps = {
-  user: boolean | null,
-  hasFetched: boolean | null;
-};
+type HomeProps = {};
 type HomeState = {
   accessPanel: string;
+  user: string | null;
+  userFetched: boolean | null;
 };
 
 /**
@@ -62,11 +61,33 @@ class HomePageClass extends React.Component<HomeProps, HomeState> {
     super(props);
     this.state = {
       accessPanel: "splash",
+      user: null,
+      userFetched: false,
     };
     this.changePanel = this.changePanel.bind(this);
-    
   }
 
+  componentDidMount() {
+    let { user, userFetched } = this.context;
+    this.setState({
+      user: user,
+      userFetched: userFetched,
+    });
+    /* perform a side-effect at mount using the value of MyContext */
+  }
+  componentDidUpdate() {
+    let { user, userFetched } = this.context;
+    if (!this.state.userFetched && userFetched) {
+      this.setState({
+        user: user,
+        userFetched: userFetched,
+      });
+    }
+    /* ... */
+  }
+  componentWillUnmount() {
+    /* ... */
+  }
   changePanel(panel: string) {
     this.setState({
       accessPanel: panel,
@@ -91,11 +112,11 @@ class HomePageClass extends React.Component<HomeProps, HomeState> {
    * @memberof HomePage
    */
   render(): React.ReactNode {
-    var { accessPanel } = this.state;
+    var { accessPanel, user, userFetched } = this.state;
     return (
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}>
-        {this.props.hasFetched && this.props.user !== null && <Redirect to="/dashboard" />}
+          {userFetched && user !== null && <Redirect to="/dashboard" />}
           <CssBaseline />
           <Box className="root" bgcolor="secondary.main">
             <Grid container component="main" className="root">
@@ -131,9 +152,5 @@ class HomePageClass extends React.Component<HomeProps, HomeState> {
   }
 }
 
-const HomePage = () => {
-  const [user, hasFetched] = useUser();
-  return <HomePageClass user={user} hasFetched={hasFetched}/>;
-
-}
-export default HomePage;
+HomePageClass.contextType = UserContext;
+export default HomePageClass;
