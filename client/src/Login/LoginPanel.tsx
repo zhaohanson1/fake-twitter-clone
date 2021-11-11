@@ -45,7 +45,11 @@ class Login extends React.Component<LoginProps, LoginState> {
             <Grid item>
               <Typography variant="body2">
                 {"Don't have an account? "}
-                <Link href="#" onClick={() => this.props.changePanel("register")} to={""}>
+                <Link
+                  href="#"
+                  onClick={() => this.props.changePanel("register")}
+                  to={""}
+                >
                   Sign Up
                 </Link>
               </Typography>

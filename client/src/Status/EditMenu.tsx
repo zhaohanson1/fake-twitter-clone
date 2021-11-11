@@ -35,7 +35,7 @@ export default function EditMenu(props: any) {
   const handleClose = (_e: React.MouseEvent) => {
     setEditable(false);
   };
-  
+
   return (
     <form>
       <Input
