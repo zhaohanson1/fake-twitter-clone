@@ -101,6 +101,7 @@ const LoginForm = () => {
           </Grid>
           <Grid item>
             <Button
+              sx={{my: 1}}
               variant="contained"
               color="primary"
               type="submit"

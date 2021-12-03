@@ -14,6 +14,10 @@ import { User } from "../models/user";
 var authController = require("../controllers/authController");
 var userController = require("../controllers/userController");
 
+/*
+  POST /api/auth/signup
+  Create user
+*/
 authRouter.post("/signup", async (req: Request, res: Response) => {
   var args = {
     email: req.body.email,
@@ -34,6 +38,11 @@ authRouter.post("/signup", async (req: Request, res: Response) => {
     });
 });
 
+
+/*
+  POST /api/auth/login
+  Login and authenticate
+*/
 authRouter.post("/login", async (req: Request, res: Response, next: any) => {
   passport.authenticate(
     "email-local",
@@ -74,17 +83,30 @@ authRouter.post("/login", async (req: Request, res: Response, next: any) => {
   )(req, res, next);
 });
 
+
+/*
+  POST /api/auth/logout
+  Logout current user
+*/
 authRouter.post("/logout", (req: Request, res: Response) => {
   req.logOut();
   res.json({ redirectURI: "/" });
 });
 
-// get current user if exists
+
+/*
+  GET /api/auth/user
+  get current user if exists
+*/
 authRouter.get("/user", (req: Request, res: Response) => {
   if (req.user) {
-    res.json({ id: req.user._id });
+    res.json({
+      id: req.user._id,
+      name: req.user.name,
+      username: req.user.username,
+    });
   } else {
-    res.json({ id: null });
+    res.json({ id: null, name: null, username: null });
   }
 });
 

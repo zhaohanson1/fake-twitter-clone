@@ -8,8 +8,10 @@ import { useState, useEffect } from "react";
  * fetched: if fetch call has finished
  */
 export default function useUser() {
-  const [user, setUser] = useState(null);
-  const [fetched, setFetched] = useState(false);
+  const [user, setUserId] = useState(null);
+  const [name, setName] = useState(null);
+  const [username, setUsername] = useState(null);
+  const [userFetched, setFetched] = useState(false);
   useEffect(() => {
     let isMounted = true;
 
@@ -21,7 +23,9 @@ export default function useUser() {
       .then((result) => result.json())
       .then((data) => {
         if (isMounted) {
-          setUser(data.id);
+          setUserId(data.id);
+          setName(data.name);
+          setUsername(data.username);
           setFetched(true);
         }
       });
@@ -30,5 +34,5 @@ export default function useUser() {
       isMounted = false;
     };
   }, [user]);
-  return [user, fetched] as const;
+  return {user, name, username, userFetched} as const;
 }

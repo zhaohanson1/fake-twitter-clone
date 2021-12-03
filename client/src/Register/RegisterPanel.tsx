@@ -1,4 +1,4 @@
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Button, Grid, Typography } from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
 import RegisterForm from "./RegisterForm";
@@ -24,6 +24,12 @@ class Register extends React.Component<RegisterProps, RegisterState> {
   render() {
     return (
       <Box width="75%">
+        <Button
+          variant="outlined"
+          onClick={() => this.props.changePanel("splash")}
+        >
+          Go Back
+        </Button>
         <Typography component="h1" variant="h5" align="center">
           Sign up
         </Typography>

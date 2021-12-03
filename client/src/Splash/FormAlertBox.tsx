@@ -10,6 +10,7 @@ interface FAProp {
 
 const FormAlertBox = (props: FAProp) => {
   return (
+    <div style={ {margin: 5}}>
     <Collapse in={props.open}>
       <Alert
         action={
@@ -28,6 +29,7 @@ const FormAlertBox = (props: FAProp) => {
         {props.msg}
       </Alert>
     </Collapse>
+    </div>
   );
 };
 

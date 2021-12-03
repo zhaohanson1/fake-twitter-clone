@@ -71,7 +71,7 @@ const RegisterForm = () => {
         severityType={"error"}
       />
       <form>
-        <Grid container direction="column" spacing={1}>
+        <Grid container direction="column">
           <Grid item>
             <TextField
               variant="outlined"
@@ -83,6 +83,7 @@ const RegisterForm = () => {
               name="email"
               autoComplete="email"
               autoFocus
+              size="small"
               onChange={(e) => setEmail(e.target.value)}
             />
           </Grid>
@@ -95,6 +96,7 @@ const RegisterForm = () => {
               id="name"
               label="Name"
               name="Name"
+              size="small"
               onChange={(e) => setName(e.target.value)}
             />
           </Grid>
@@ -107,6 +109,7 @@ const RegisterForm = () => {
               id="username"
               label="Username"
               name="username"
+              size="small"
               autoComplete="username"
               onChange={(e) => setUsername(e.target.value)}
             />
@@ -117,10 +120,11 @@ const RegisterForm = () => {
               margin="normal"
               required
               fullWidth
-              name="password"
-              label="Password"
               type="password"
               id="password"
+              label="Password"
+              name="password"
+              size="small"
               autoComplete="new-password"
               onChange={(e) => setPassword(e.target.value)}
             />
@@ -131,14 +135,16 @@ const RegisterForm = () => {
               margin="normal"
               required
               fullWidth
-              name="confirm-password"
-              label="Confirm Password"
               type="password"
               id="confirm-password"
+              label="Confirm Password"
+              name="confirm-password"
+              size="small"
             />
           </Grid>
           <Grid item>
             <Button
+              sx= {{my: 1}}
               type="submit"
               variant="contained"
               color="primary"

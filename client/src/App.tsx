@@ -28,11 +28,11 @@ declare module "@mui/styles/defaultTheme" {
 }
 
 const App = () => {
-  const [user, userFetched] = useUser();
+  const {user, name, username, userFetched} = useUser();
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
-        <UserContext.Provider value={{ user, userFetched }}>
+        <UserContext.Provider value={{ user, name, username, userFetched }}>
           <Router>
             <Switch>
               <Route exact path="/" component={Splash} />

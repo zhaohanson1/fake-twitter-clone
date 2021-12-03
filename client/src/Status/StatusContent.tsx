@@ -9,16 +9,16 @@ import MenuButton from "./StatusButtons/MenuButton";
 import { useUserContext } from "../Contexts/UserContext";
 
 export default function StatusContent(props: any) {
-  const { user } = useUserContext();
+  const { user, name, username } = useUserContext();
   var { status, forceUpdate } = props;
   const [editable, setEditable] = useState(false);
   const b = { p: 1, border: "1px black solid" };
 
   return (
-    <Box>
-      <Box sx={{ p: 1, display: "flex" }}>
-        <Box sx={{ p: 1, width: "auto" }}>Name</Box>
-        <Box sx={{ p: 1, width: "auto" }}>@{status.user}</Box>
+    <Box sx={{ width: "100%" }}>
+      <Box sx={{ p: 1, display: "flex", justifyContent: "space-between" }}>
+        <Box sx={{ p: 1, width: "auto" }}>{name}</Box>
+        <Box sx={{ p: 1, width: "auto" }}>@{username}</Box>
         <Box sx={{ p: 1, width: "auto" }}>
           {new Date(status.creationDate).toLocaleString()}
         </Box>
@@ -43,7 +43,7 @@ export default function StatusContent(props: any) {
           )}
         </Box>
         <Box sx={{ p: 1 }}>{status._id}</Box>
-        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Box sx={{ display: "flex", justifyContent: "space-around" }}>
           <CommentButton />
           <RetweetButton />
           <LikeButton status={status} />

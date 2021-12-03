@@ -1,4 +1,4 @@
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Button, Grid, Typography } from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
 
@@ -26,9 +26,12 @@ class Login extends React.Component<LoginProps, LoginState> {
   render() {
     return (
       <Box width="75%">
-        <Link href="#" onClick={() => this.props.changePanel("splash")} to={""}>
+        <Button
+          variant="outlined"
+          onClick={() => this.props.changePanel("splash")}
+        >
           Go Back
-        </Link>
+        </Button>
         <LoginForm />
         <Box mx={8} my={4} width="auto">
           <Grid

@@ -24,14 +24,14 @@ class AccessSplash extends React.Component<AccessProps, AccessState> {
    */
   render() {
     return (
-      <Box mx={8} my={4}>
+      <Box mx={8} my={3}>
         <Grid
           container
           item
           direction="column"
-          justifyContent="space-around"
+          justifyContent="space-evenly"
           alignItems="center"
-          spacing={3}
+          spacing={4}
         >
           <Grid item>
             <Button
@@ -39,6 +39,7 @@ class AccessSplash extends React.Component<AccessProps, AccessState> {
               color="primary"
               fullWidth
               href="#"
+              size="large"
               onClick={() => this.props.changePanel("register")}
             >
               Register Now
@@ -52,16 +53,15 @@ class AccessSplash extends React.Component<AccessProps, AccessState> {
           </Grid>
 
           <Grid item>
-            <Typography variant="body2">
-              Already have an account?{" "}
-              <Link
-                href="#"
-                onClick={() => this.props.changePanel("login")}
-                to={""}
-              >
-                Sign in
-              </Link>
-            </Typography>
+            <Typography variant="body2">Already have an account? </Typography>
+            <Button
+              variant="outlined"
+              color="primary"
+              fullWidth
+              onClick={() => this.props.changePanel("login")}
+            >
+              Sign in
+            </Button>
           </Grid>
         </Grid>
       </Box>

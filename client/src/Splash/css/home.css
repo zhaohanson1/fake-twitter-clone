@@ -18,3 +18,12 @@ body {
 button {
   margin: 24px 0 16px;
 }
+
+a {
+  text-decoration: none;
+  color: rgb(0, 38, 255);
+}
+
+a:hover {
+  text-decoration: underline;
+}

@@ -15,7 +15,7 @@ export default function StatusBox(props: any) {
           bgcolor: "gray.00",
         }}
       >
-        <Card variant="outlined">
+        <Card sx={{ width: "100%" }} variant="outlined">
           <StatusHeader />
           <Box
             sx={{
