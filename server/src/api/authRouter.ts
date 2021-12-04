@@ -38,7 +38,6 @@ authRouter.post("/signup", async (req: Request, res: Response) => {
     });
 });
 
-
 /*
   POST /api/auth/login
   Login and authenticate
@@ -83,7 +82,6 @@ authRouter.post("/login", async (req: Request, res: Response, next: any) => {
   )(req, res, next);
 });
 
-
 /*
   POST /api/auth/logout
   Logout current user
@@ -92,7 +90,6 @@ authRouter.post("/logout", (req: Request, res: Response) => {
   req.logOut();
   res.json({ redirectURI: "/" });
 });
-
 
 /*
   GET /api/auth/user
@@ -104,9 +101,10 @@ authRouter.get("/user", (req: Request, res: Response) => {
       id: req.user._id,
       name: req.user.name,
       username: req.user.username,
+      email: req.user.email,
     });
   } else {
-    res.json({ id: null, name: null, username: null });
+    res.json({ id: null, name: null, username: null, email: null });
   }
 });
 

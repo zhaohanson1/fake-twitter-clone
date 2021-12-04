@@ -9,16 +9,16 @@ import MenuButton from "./StatusButtons/MenuButton";
 import { useUserContext } from "../Contexts/UserContext";
 
 export default function StatusContent(props: any) {
-  const { user, name, username } = useUserContext();
-  var { status, forceUpdate } = props;
+  const { user } = useUserContext();
+  var { status, forceUpdate, statusUserInfo } = props;
   const [editable, setEditable] = useState(false);
   const b = { p: 1, border: "1px black solid" };
 
   return (
     <Box sx={{ width: "100%" }}>
       <Box sx={{ p: 1, display: "flex", justifyContent: "space-between" }}>
-        <Box sx={{ p: 1, width: "auto" }}>{name}</Box>
-        <Box sx={{ p: 1, width: "auto" }}>@{username}</Box>
+        <Box sx={{ p: 1, width: "auto" }}>{statusUserInfo.name}</Box>
+        <Box sx={{ p: 1, width: "auto" }}>@{statusUserInfo.username}</Box>
         <Box sx={{ p: 1, width: "auto" }}>
           {new Date(status.creationDate).toLocaleString()}
         </Box>

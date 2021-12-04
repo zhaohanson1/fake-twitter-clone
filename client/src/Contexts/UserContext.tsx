@@ -1,15 +1,17 @@
 import { createContext, useContext } from "react";
 export type UserContext = {
-  user: string | null;
-  name: string | null;
-  username: string | null;
+  user: string | undefined;
+  name: string | undefined;
+  username: string | undefined;
   userFetched: boolean;
+  email: string | undefined;
 };
 
 export const UserContext = createContext<UserContext>({
-  user: null,
-  name: null,
-  username: null,
+  user: undefined,
+  name: undefined,
+  username: undefined,
+  email: undefined,
   userFetched: false,
 });
 export const useUserContext = () => useContext(UserContext);

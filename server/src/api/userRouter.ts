@@ -32,21 +32,27 @@ userRouter.post("/", (req: Request, res: Response) => {
 /**
  * GET /api/user/:userid
  * get user by id
+ * do not return password hash
  */
-userRouter.get("/:userId", (req: Request, res: Response) => {
+userRouter.get("/:userId", async (req: Request, res: Response) => {
   var userId = req.params.userId;
-  var user = userController.getUserById(userId);
-  res.json(user);
+  userController.getUserById(userId).then((user: any) => {
+    res.json(user);
+  });
+  
+  
 });
 
 /**
  * PUT /api/user/:userid
  * edit user by id
+ * do not allow update password from this endpoint
  */
-userRouter.post("/:userId", (req: Request, res: Response) => {
+userRouter.put("/:userId", (req: Request, res: Response) => {
   var userId = req.params.userId;
   var attributes = req.body;
   userController.updateUser({ _id: userId }, attributes);
+  res.json({redirectURI: '/dashboard'})
 });
 
 /**

@@ -3,9 +3,26 @@ import { Box, Card } from "@mui/material";
 import StatusAvatar from "./StatusAvatar";
 import StatusHeader from "./StatusHeader";
 import StatusContent from "./StatusContent";
+import { useEffect, useState } from "react";
 
 export default function StatusBox(props: any) {
   const { status, forceUpdate } = props;
+  const [statusUserInfo, setStatusUserInfo] = useState({});
+
+  useEffect(() => {
+    fetch(`/api/user/${status.user}`, {
+      method: "GET",
+    })
+      .then((res) => res.json())
+      .then((user) => {
+        setStatusUserInfo({
+          name: user.name,
+          username: user.username,
+          email: user.email,
+        });
+      });
+  }, []);
+
   return (
     <div style={{ width: "100%" }}>
       <Box
@@ -26,7 +43,11 @@ export default function StatusBox(props: any) {
             }}
           >
             <StatusAvatar />
-            <StatusContent status={status} forceUpdate={forceUpdate} />
+            <StatusContent
+              status={status}
+              forceUpdate={forceUpdate}
+              statusUserInfo={statusUserInfo}
+            />
           </Box>
         </Card>
       </Box>

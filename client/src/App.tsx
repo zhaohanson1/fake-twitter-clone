@@ -20,6 +20,7 @@ import Login from "./Login/LoginPage";
 import Register from "./Register/RegisterPage";
 import Dashboard from "./Dashboard/DashboardPage";
 import StatusPage from "./Status/StatusPage";
+import EditProfile from "./Profile/EditProfile";
 import { UserContext } from "./Contexts/UserContext";
 
 declare module "@mui/styles/defaultTheme" {
@@ -28,11 +29,11 @@ declare module "@mui/styles/defaultTheme" {
 }
 
 const App = () => {
-  const {user, name, username, userFetched} = useUser();
+  const userInfo = useUser();
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
-        <UserContext.Provider value={{ user, name, username, userFetched }}>
+        <UserContext.Provider value={userInfo}>
           <Router>
             <Switch>
               <Route exact path="/" component={Splash} />
@@ -40,6 +41,7 @@ const App = () => {
               <Route path="/register" component={Register} />
               <Route path="/dashboard" component={Dashboard} />
               <Route path="/status/:id" component={StatusPage} />
+              <Route path="/profile/edit" component={EditProfile} />
             </Switch>
           </Router>
         </UserContext.Provider>

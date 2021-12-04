@@ -72,8 +72,8 @@ module.exports = {
   /* READ */
   getUser: getUser,
 
-  getUserById: (userId: string) => {
-    return User.findOne({ _id: userId }).exec();
+  getUserById: async (userId: string) => {
+    return await User.findById(userId).select("-passwordSalt -passwordHash").exec();
   },
 
   /* UPDATE */
@@ -86,7 +86,7 @@ module.exports = {
    * @returns {Query}
    */
   updateUser: (userArgs: object, attributes: object) => {
-    return User.updateOne(userArgs, attributes);
+    return User.updateOne(userArgs, attributes).exec();
   },
 
   addStatusToUser: (userId: string, postId: string, callback: any) => {
